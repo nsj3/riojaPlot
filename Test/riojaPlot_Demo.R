@@ -218,6 +218,41 @@ rp <- riojaPlot(poll, chron, groups=types, selVars=names(mx5),
           plot.zones="auto", 
           xRight=0.8)
 
-riojaPlot(pca, chron, riojaPlot=rp)
+myfun <- function(x, y, i, nm) {
+  usr <- par("usr")
+  segments(0, usr[3], 0, usr[4], col="lightgrey")
+  segments(0, y, x, y, col="lightgrey")
+}
 
+riojaPlot(pca, chron, riojaPlot=rp, 
+          plot.bar=FALSE,
+          xGap=0.02,
+          col.axis=NA,
+          fun1=myfun)
 
+# put dendrogram on right
+
+clust <- chclust(dist(sqrt(poll)))
+
+rp1 <- riojaPlot(poll, chron, groups=types, selVars=names(mx5),
+          yvar.name="Age (years BP)",
+          ymin=6290, ymax=14250, yinterval=500,
+          sec.yvar.name="Depth (cm)",
+          plot.sec.axis = TRUE,
+          plot.groups=TRUE,
+          plot.cumul=TRUE,
+          scale.percent=TRUE,
+          plot.top.axis=TRUE,
+          ytks1=seq(6000, 14500, by=500),
+          srt.xlabel=45,
+          xRight=0.7)
+
+rp2 <- riojaPlot(pca, chron, riojaPlot=rp, 
+          plot.bar=FALSE,
+          xGap=0.02,
+          col.axis=NA,
+          xRight=0.9,
+          fun1=myfun)
+
+addRPClust(rp2, clust)
+addRPClustZone(rp2, clust, xLeft=rp1$box[1], col="red")

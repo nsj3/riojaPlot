@@ -1188,7 +1188,7 @@ makeStyles <- function(...) {
    par(fig = oldfig)
    xRight2 <- xRight + ifelse(is.null(clust), 0, clust.width)
    ll <- list(call=fcall, box=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop), 
-              usr = usr1, mgpX=mgpX, xRight=xRight2, orig.fig=orig.fig,
+              usr = usr1, mgpX=mgpX, mgpX3=mgpX3, xRight=xRight2, orig.fig=orig.fig,
               yvar=yvar[, 1, drop=TRUE], ylim=ylim, y.rev=y.rev, figs=figs, usrs=usrs)
    class(ll) <- "riojaPlot"
    invisible(ll)
@@ -1327,7 +1327,11 @@ addRPClust <- function(riojaPlot, clust, xLeft=NULL, xRight=0.99, verbose=TRUE, 
   else
     xl <- ylim
   plot(clust, xvar=riojaPlot$yvar, horiz=TRUE, x.rev=riojaPlot$y.rev, labels=rep("", length(riojaPlot$yvar)), 
-       hang=-1, mgp=riojaPlot$mgp, cex.axis=riojaPlot$style$cex.axis, xlim=xl, yaxs="i", xpd=FALSE, tcl=riojaPlot$style$tcl, ...)
+       hang=-1, mgp=riojaPlot$mgpX, cex.axis=riojaPlot$style$cex.axis, xlim=xl, yaxs="i", xpd=FALSE, tcl=riojaPlot$style$tcl, ...)
+     if (riojaPlot$style$plot.top.axis) {
+       axis(side=3, mgp=riojaPlot$mgpX3, cex.axis=riojaPlot$style$cex.axis, tcl=riojaPlot$style$tcl)
+     }
+  
    par(oldpar)
 }
 
