@@ -566,7 +566,7 @@ riojaPlot(aber.poll, aber.chron,
 In this example we use geochemical data from Laguna del Maule published by Frugone-Álvarez et al. (2020) and downloaded from the NOAA Paleoclimate data archive (https://www.ncei.noaa.gov/products/paleoclimatology).  The data we plot here contain 9 geochemical variables.  Some (TS, TC, TIC and TOC) are measured at every interval but others only at selected depths. We plot magnetic susceptibility with symbols, TS, TC, TIC, TOC and BioSi with lines, and d15N and d13C with lines and symbols.
 
 ```{r FAQ7A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
-fpath <- system.file("extdata/maule2020geochem.txt", package="rioja")
+fpath <- system.file("extdata/maule2020geochem.txt", package="riojaPlot")
 maule <- readr::read_delim(fpath, skip=158, show_col_types = FALSE) 
 
 maule.data <- maule %>% select(-(1:4))
@@ -777,12 +777,12 @@ riojaPlot(swap.diat, swap.pH, selVars=swap.sel,
 
 ### 13. How do I plot ecological time series?
 
-`riojaPlot` can also be used to plot multi-species ecological time series (or spatial transect) data.  Here we use diatom data from the UK Upland Waters Monitoring Network (https://uwmn.uk/).  The dat at hand are epilithic diatoms samples collected annually from 1988-2018 from Loch Chon (Trossachs, Scotland).  Loch Chon has been previously acidified as a result of acid precipitation, these data were collected to monitor the potential recovery of sites from this previous acidification.  Also witht he diatom counts (expressed as relative abundance) a trend test based on a multivariate generalised linear model using the `manyglm` function in package `mvabund` has been conducted to identify taxa that have a significant increasing or decreasing trend.
+`riojaPlot` can also be used to plot multi-species ecological time series (or spatial transect) data.  Here we use diatom data from the UK Upland Waters Monitoring Network (https://uwmn.uk/).  The dat at hand are epilithic diatoms samples collected annually from 1988-2018 from Loch Chon (Trossachs, Scotland).  Loch Chon has been previously acidified as a result of acid precipitation, these data were collected to monitor the potential recovery of sites from this previous acidification.  Also with the diatom counts (expressed as relative abundance) a trend test based on a multivariate generalised linear model using the `manyglm` function in package `mvabund` has been conducted to identify taxa that have a significant increasing or decreasing trend.
 
 We first re-order the taxa according to their trend over time and plot the data with silhouettes, coloured to show taxa with significant increasing, decreasing or no trend.
 
 ```{r FAQ13A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
-fpath <- system.file("extdata/LochChon.xlsx", package="rioja")
+fpath <- system.file("extdata/LochChon.xlsx", package="riojaPlot")
 chon <- readxl::read_excel(fpath, sheet="Diatoms")
 sig_test <- readxl::read_excel(fpath, sheet="Sig_test")
 

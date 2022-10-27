@@ -11,14 +11,16 @@
 Plots a diagram of multiple biological, physical or chemical parameters agains depth or time, as used in geology & palaeoecology.
 }
 \usage{
-riojaPlot(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, riojaPlot=NULL, verbose=TRUE, \dots)
+riojaPlot(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
+          riojaPlot=NULL, verbose=TRUE, \dots)
 
 addRPClust(riojaPlot, clust, xLeft=NULL, xRight=0.99, verbose=TRUE, \dots)
 
-addRPClustZone(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NULL, verbose=TRUE, \dots)
+addRPClustZone(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NULL, 
+               verbose=TRUE, \dots)
 
 addRPZone(riojaPlot, upper, lower=NULL, xLeft=NULL, xRight=NULL, col="red", 
-    alpha=0.1, border=NA, verbose=TRUE, \dots)
+          alpha=0.1, border=NA, verbose=TRUE, \dots)
 
 listStyles()
 
@@ -36,7 +38,6 @@ makeStyles(...)
   \item{riojaPlot}{ object returned by riojaPlot. }
   \item{upper, lower}{ upper and lower values of a zone to add. }
   \item{xLeft, xRight}{ left and right position of figure on page (as a fraction of page width). }
-  \item{gap}{ gap to leave on left before plotting (in fraction of page width). }
   \item{verbose}{ show warnings (default TRUE). }
   \item{col, alpha, border}{ colour, alpha value (transparency) and border colour of zones. }
   \item{...}{ additional arguments to control the style of the figure (see details below) or colour of zones. }
@@ -98,8 +99,6 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{cumulSpace}}{ gap to leave between top axis and cumulative plot legend.  Default NA for riojaPlot to guess. }
   
 }
-\code{riojaPlot2} adds a second (or third etc.) set of variables to a riojaPlot diagram.   
-
 \code{addRPClust} adds a dendrogram to an existing riojaPlot diagram.
 
 \code{addRPZone} adds user-defined horizontal zone lines to an existing diagram. 
@@ -204,7 +203,7 @@ riojaPlot(spec, yvar, selTaxa, types,
    plot.zones="auto", 
    names.italicise = TRUE)
 
-# save settings as a style and apply to figure:
+# save settings as a style and apply to figure, fine-tuning the y-axis:
 
 mystyle <- makeStyles(
    plot.sec.axis=TRUE, 
@@ -224,11 +223,10 @@ mystyle <- makeStyles(
 riojaPlot(spec, yvar, selTaxa, types, mystyle,
    sec.yvar.name="Depth (cm)", 
    yvar.name="Age (years BP)",
-   ymin=6000,
+   ymin=6250,
    ymax=14300,
-   yinterval=500)
-
-
+   yinterval=500, 
+   ytks1=seq(6000, 14000, by=500))
 }
 
 \keyword{ hplot }
