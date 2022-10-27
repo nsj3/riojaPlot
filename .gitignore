@@ -1,4 +1,5 @@
 .Rproj.user/
+.Rproj.user2/
 .Rhistory
 .RData
 src/*.o
