@@ -3,13 +3,14 @@ title: 'riojaPlot: User Guide (Version `r read.dcf("../DESCRIPTION", fields="Ver
 author: "Steve Juggins"
 date: "`r Sys.Date()`"
 output:
-  html_document:
-    toc: yes
-    df_print: paged
   pdf_document:
     highligh: null
-    toc: yes
+    toc: true
+    toc_depth: 3
     number_sections: no
+  html_document:
+    toc: true
+    df_print: paged
   rmarkdown::html_vignette:
     toc: yes
 vignette: > 
