@@ -1364,10 +1364,3 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NU
     par(oldpar)
   }
 }
-
-figCnvt <- function(fig1, fig2) {
-   xR <- fig1[2] - fig1[1]
-   yR <- fig1[4] - fig1[3]
-   ff <- c(fig1[1] + fig2[1]*xR, fig1[1] + fig2[2]*xR, fig1[3] + fig2[3]*yR, fig1[3] + fig2[4]*yR)
-   ff
-}

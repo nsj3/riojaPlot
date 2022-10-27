@@ -2,7 +2,7 @@
 ## Imports
 ##
 
-importFrom(rioja, chclust)
+importFrom(rioja, chclust, figCnvt)
 
 importFrom(vegan, bstick, make.cepnames)
 

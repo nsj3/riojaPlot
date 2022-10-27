@@ -1,14 +1,14 @@
-if(!exists("meta") || is.null(meta)) meta <- packageDescription("rioja")
+if(!exists("meta") || is.null(meta)) meta <- packageDescription("riojaPlot")
 
-citHeader("To cite package 'rioja' in publications use:")
+citHeader("To cite package 'riojaPlot' in publications use:")
 
 citEntry(entry="Manual",
-	title ="rioja: Analysis of Quaternary Science Data",
+	title ="riojaPlot: Stratigraphic diagrams in R",
 	author = personList(as.person("Steve Juggins")),
 	year = format(as.Date(meta$Date), "%Y"),
 	note = paste("R package version", meta$Version),
-	url = "https://cran.r-project.org/package=rioja",
+	url = "https://cran.r-project.org/package=riojaPlot",
 	textVersion =	paste("Juggins, S. (",format(as.Date(meta$Date), "%Y"),") ", 
-  "rioja: Analysis of Quaternary Science Data, R package version (",
-	meta$Version, ")."," (https://cran.r-project.org/package=rioja).", sep="")
+  "riojaPlot: Stratigraphic diagrams in R, package version (",
+	meta$Version, ")."," (https://cran.r-project.org/package=riojaPlot).", sep="")
 )
