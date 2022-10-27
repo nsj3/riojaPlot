@@ -1,0 +1,12 @@
+base
+methods
+datasets
+utils
+grDevices
+graphics
+stats
+rioja
+dplyr
+cluster
+stringr
+sjmisc

@@ -1,0 +1,27 @@
+{
+    "args": [
+        "-IC:/PROGRA~1/R/R-42~1.1/include",
+        "-DNDEBUG",
+        "-std=gnu99",
+        "-DEIGEN_DONT_VECTORIZE",
+        "-nostdinc",
+        "-U_MSC_VER",
+        "-D__GNUC__=10",
+        "-D__GNUC_MINOR__=3",
+        "-D__GNUC_PATCHLEVEL__=0",
+        "-IC:/rtools42/x86_64-w64-mingw32.static.posix/lib/gcc/x86_64-w64-mingw32.static.posix/10.3.0/include/c++",
+        "-IC:/rtools42/x86_64-w64-mingw32.static.posix/lib/gcc/x86_64-w64-mingw32.static.posix/10.3.0/include/c++/x86_64-w64-mingw32.static.posix",
+        "-IC:/rtools42/x86_64-w64-mingw32.static.posix/lib/gcc/x86_64-w64-mingw32.static.posix/10.3.0/include/c++/backward",
+        "-IC:/rtools42/x86_64-w64-mingw32.static.posix/lib/gcc/x86_64-w64-mingw32.static.posix/10.3.0/include",
+        "-IC:/rtools42/x86_64-w64-mingw32.static.posix/include",
+        "-IC:/rtools42/x86_64-w64-mingw32.static.posix/lib/gcc/x86_64-w64-mingw32.static.posix/10.3.0/include-fixed",
+        "-include",
+        "D:/Data/GitHub/riojaPlot/.Rproj.user/4200D3F2/compilation-database/mingw64/cpp-definitions.h"
+    ],
+    "pch": "",
+    "is_cpp": false,
+    "hash": "16225567961666860859",
+    "compiler": "16729596289715928920",
+    "rversion": "4.2.1",
+    "dbversion": 1
+}

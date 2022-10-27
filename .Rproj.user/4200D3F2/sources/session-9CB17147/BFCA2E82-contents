@@ -1,0 +1,16 @@
+Package: riojaPlot
+Type: Package
+Title: Stratigraphic diagrams in R
+Version: 0.1-1
+Date: 2022-10-28
+Author: Steve Juggins
+Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
+Depends: R (>= 3.5), rioja
+Imports: vegan, mgcv, grDevices, sjmisc, stringr, dplyr, methods, forcats
+Suggests: knitr, rmarkdown, R.rsp, flextable, readxl, tibble, readr
+Description: Stratigraphic diagrams in R.
+License: GPL-2
+URL: http://www.staff.ncl.ac.uk/stephen.juggins/, https://github.com/nsj3/riojaPlot
+NeedsCompilation: no
+Repository: CRAN
+VignetteBuilder: knitr, R.rsp
