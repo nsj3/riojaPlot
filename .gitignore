@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+src/*.o
+src/*.so
+src/*.dll
+vignettes/Cache/*.*
+R/MLRC3.r
+^Test/*.*
+^Test.*
