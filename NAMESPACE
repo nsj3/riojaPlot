@@ -27,5 +27,7 @@ import(stats)
 import(utils)
 
 ## export regular functions with dot names
-export(riojaPlot, addRPZone, addRPClustZone, addRPClust, listStyles, makeStyles)
+export(riojaPlot, addRPZone, addRPClustZone, 
+       addRPClust, addRPZoneNames, 
+       listStyles, makeStyles)
 

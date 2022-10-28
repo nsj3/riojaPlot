@@ -53,13 +53,13 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, r
       style$xRight <- 0.99
       style$plot.yaxis <- FALSE
       style$start.new.plot <- FALSE
-      style$y.rev  <- riojaPlot$style$y.rev
+#      style$y.rev  <- riojaPlot$style$y.rev
       style$yBottom <- riojaPlot$box[3] 
       style$yTop <- riojaPlot$box[4] # , mgp=NULL, # c(3, 0.6/3, 0.2), 
       style$srt.xlabel <- riojaPlot$style$srt.xlabel
       style$cex.xlabel <- riojaPlot$style$cex.xlabel
       style$cex.axis <- riojaPlot$style$cex.axis
-      style$ylim <- riojaPlot$style$ylim  
+#      style$ylim <- riojaPlot$style$ylim  
       style$tcl <- riojaPlot$style$tcl  
       style$exag.alpha <- riojaPlot$style$exag.alpha
       style$col.axis <- riojaPlot$style$col.axis
@@ -103,7 +103,7 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, r
    if (length(style$exag)==1)
        style$exag <- rep(style$exag, ncol)
 
-   .riojaPlot1(plotdata, style, verbose=verbose)  
+   .riojaPlot1(plotdata, style, riojaPlot=riojaPlot, verbose=verbose)  
 #   on.exit({
 #     rm("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
 #                         "groupColours", "groupCex", "groupNames", lwd.axis, envir=.GlobalEnv)
@@ -227,7 +227,7 @@ makeStyles <- function(...) {
    style
 }
 
-.riojaPlot1 <- function(mydata, style, verbose) 
+.riojaPlot1 <- function(mydata, style, riojaPlot=NULL, verbose) 
 {
    orig.fig <- par("fig")
 
@@ -394,6 +394,17 @@ makeStyles <- function(...) {
    if (is.na(style$ytks2[1]))
       style$ytks2 <- NULL
    ylim <- NULL
+   ylim2 <- NULL
+   yLab <- yvarName
+   if (nchar(style$ylabel[1])>0) {
+      yLab <- style$ylabel
+   }
+   
+   if (!is.null(riojaPlot)) {
+     ylim <- riojaPlot$ylim
+     style$y.rev <- FALSE
+   } else {
+     
    if (is.character(yvar[, 1, drop=TRUE])) {
       style$yLabels <- yvar[, 1, drop=TRUE]
       yvar <- data.frame(SampleNo=1:length(yvar[, 1, drop=TRUE]))
@@ -419,14 +430,9 @@ makeStyles <- function(...) {
          }
       }
    }
-
    secYvarName <- style$sec.yvar.name
    doSecYvar <- FALSE
    secYvar <- NULL
-   yLab <- yvarName
-   if (nchar(style$ylabel[1])>0) {
-      yLab <- style$ylabel
-   }
    if (style$plot.sec.axis & nchar(stringr::str_trim(secYvarName)) > 0) {
       if (yvarName != secYvarName) {
          if (!(secYvarName %in% colnames(mydata$chron))) {
@@ -445,7 +451,6 @@ makeStyles <- function(...) {
          }
       }
    }
-   ylim2 <- NULL
    style$ytks <- style$ytks1
    if (doSecYvar) {
       ylim2 <- range(yvar[, 2], na.rm=TRUE)
@@ -472,8 +477,11 @@ makeStyles <- function(...) {
       } 
    }
    
+   }
+   
+
 # Groups   
-   funlist <- style$fun2
+   funlist <- style$fun.xfront
    
    if (style$plot.cumul) {
 #      groupData <<- t(apply(d, 1, 
@@ -493,6 +501,8 @@ makeStyles <- function(...) {
       nCol <- ncol(d)
       if (is.null(funlist)) 
          funlist <- lapply(1:(nCol), function(x) NULL)
+      else if (length(funlist)==1)
+         funlist <- lapply(1:(nCol-1), function(x) funlist)
       funlist[[nCol]] <- plotCumul
       style$groupColours <- c(style$groupColours, NA)
 #      cumulLine <<- style$plot.cumul.line
@@ -572,7 +582,7 @@ makeStyles <- function(...) {
                 y.tks.labels=style$yLabels, col.bg=NULL, col.exag=style$col.exag, exag.mult=style$exag.mult, 
                 x.names=style$x.names, fun2=funlist, xSpace=xSpace, tcl=style$tcl,
                 clust.width=style$clust.width, xRight=style$xRight, cumul.mult=style$cumul.mult, 
-                orig.fig=orig.fig, exag.alpha=style$exag.alpha, fun1=style$fun.back,
+                orig.fig=orig.fig, exag.alpha=style$exag.alpha, fun1=style$fun.xback,
                 ylabPos=style$ylabPos, x.pc.omit0=style$x.pc.omit0, lwd.poly.line=style$lwd.poly.line,
                 lwd.line=style$lwd.line, col.exag.line=style$col.exag.line,
                 lwd.exag.line=style$lwd.exag.line, lwd.axis=style$lwd.axis, col.axis=style$col.axis, 
@@ -649,7 +659,9 @@ makeStyles <- function(...) {
             doSecYvar <- TRUE
       }
    }
-  
+
+   
+     
    yNames <- c("", "")
    if (!is.null(ylabel)) {
       if (length(ylabel)==1)
@@ -808,9 +820,10 @@ makeStyles <- function(...) {
    }
 
    maxlen <- max(sapply(x.names, function(x) strwidth(x, units="figure", cex=cex.xlabel))) 
-   maxlen <- max(maxlen, strwidth(yNames[1], units="figure", cex=cex.xlabel))
-   if (doSecYvar)
+   if (doSecYvar) {
+      maxlen <- max(maxlen, strwidth(yNames[1], units="figure", cex=cex.xlabel))
       maxlen <- max(maxlen, strwidth(yNames[2], units="figure", cex=cex.xlabel))
+   }
    fin <- par("fin")
    plotRatio <- fin[1] / fin[2]
    
@@ -937,6 +950,7 @@ makeStyles <- function(...) {
      x1 <- x1 + xSpace
 #     mtext(title, adj = 0, line = 5, cex = cex.title)
 #     if (nchar(stringr::str_trim(yNames[1])) > 0) {
+     
      if (nchar(yNames[1]) > 0) {
         if (!doSecYvar) {
            mtext(yNames[1], side=2, line=ylabPos, cex=cex.ylabel)
@@ -950,10 +964,10 @@ makeStyles <- function(...) {
    usrs <- vector("list", length=nsp)
 
    if(!is.null(fun.plotback)) {
-      box=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop)     
+      fbox=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop)     
       myfig <- par("fig")
-      par(fig=box)
-      fun.plotback(usr1, box)
+      par(fig=fbox)
+      fun.plotback(usr1, fbox)
       par(fig=myfig)
    }
       
@@ -962,6 +976,7 @@ makeStyles <- function(...) {
 
    # omit missing values  
      y_var <- yvar[, 1, drop=TRUE]
+     names(y_var) <- rownames(yvar)
      x_var <- d[, i, drop=TRUE]
   
      cumulPlot <- FALSE
@@ -1173,8 +1188,9 @@ makeStyles <- function(...) {
      rF <- fin[2]
      r <- rD/rF*xLabSpace
      pos <- usr2[4] + r
-     if (y.rev)
+     if (usr1[3]-usr1[4] > 0)
         pos <- usr2[4]-r
+     
      if (!cumulPlot) {
         par("lheight" = 0.7)
         if (srt.xlabel < 90)
@@ -1204,7 +1220,10 @@ makeStyles <- function(...) {
    oldfig[oldfig < 0] <- 0
    par(fig = oldfig)
    xRight2 <- xRight + ifelse(is.null(clust), 0, clust.width)
-   ll <- list(call=fcall, box=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop), 
+   fbox <- c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop)
+   names(fbox) <- c("xLeft", "xRight", "yBottom", "yTop")
+
+   ll <- list(call=fcall, box=fbox, 
               usr = usr1, mgpX=mgpX, mgpX3=mgpX3, xRight=xRight2, orig.fig=orig.fig,
               yvar=yvar[, 1, drop=TRUE], ylim=ylim, y.rev=y.rev, figs=figs, usrs=usrs)
    class(ll) <- "riojaPlot"
@@ -1384,4 +1403,34 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NU
     }
     par(oldpar)
   }
+}
+
+addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight=0.99, ...) {
+   fun.zone <- function(x, y, i, nm) {
+      usr <- par("usr")
+      names <- names(y)
+      text(0.5, y, labels=names, adj=c(0.5, 0.5), ...)
+      if (showColumn) {
+        print(usr)
+         segments(usr[1], usr[3], usr[1], usr[4], col=riojaPlot$style$col.axis, xpd=NA, ...)
+         segments(usr[2], usr[3], usr[2], usr[4], col=riojaPlot$style$col.axis, xpd=NA, ...)
+      }
+   }
+   x <- data.frame(x=rep(c(0, 1), length.out=nrow(zones)))
+   y <- zones[, 1, drop=FALSE]
+   rownames(y) <- zones[, 2, drop=TRUE]
+   
+   if (is.null(xLeft))
+     xLeft <- riojaPlot(xRight)
+   riojaPlot(x, y,
+            riojaPlot=riojaPlot, 
+            col.axis=NA,
+            xRight=xRight,
+            xLeft=xLeft,
+            x.names="",
+            plot.line=FALSE,
+            plot.bar=FALSE,
+            plot.top.axis=FALSE,
+            plot.bottom.axis=FALSE,
+            fun.xfront=fun.zone)
 }

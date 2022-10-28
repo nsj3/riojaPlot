@@ -46,7 +46,7 @@ To create a basic stratigraphic diagram just pass `riojaPlot` a data frame of va
 library(riojaPlot)
 
 # use built-in data from Abernethy Forest
-# see ?aber for citation
+# see ?rioja::aber for citation
 data(aber)
 # extract pollen percentages
 aber.poll <- aber$spec
@@ -163,7 +163,7 @@ riojaPlot(aber.poll, aber.chron, aber.sel, aber.types,
 
 ## 6. Add a zonation
 
-We can add a zonation to the plot in 3 ways.  The first is to set the styles `do.clust` and `plot.clust` and / or `plot.zones` to "auto" or the number of zones to show.  This will perform a constrained clustering using `chclust` and either add a dendrogram and/or zone lines to the diagram.  The number of zones can be estimated using a broken stick model (`plot.zones="auto"` see ? chclust for details) or specified (e.g. `plot.zones=3). Colour of the zone lines can be changed with `col.zones`.  The zonation can be based on all columns in the data (style `clust.use.selected=FALSE`) or only the displayed columns if only a subset are selected using `selVars`.  Data can optionally be transformed (`clust.data.trans="sqrt"`), scaled (`clust.data.trans="scale"`) prior to clustering or used as is (`clust.data.trans="none"`, the default).  Change the width of the dendrogram using style `clust.width=N` where N is the required width as a fraction of the whole diagram width.
+We can add a zonation to the plot in 3 ways.  The first is to set the styles `do.clust` and `plot.clust` and / or `plot.zones` to "auto" or the number of zones to show.  This will perform a constrained clustering using `chclust` and either add a dendrogram and/or zone lines to the diagram.  The number of zones can be estimated using a broken stick model (`plot.zones="auto"` see `?rioja::chclust` for details) or specified (e.g. `plot.zones=3`). Colour of the zone lines can be changed with `col.zones`.  The zonation can be based on all columns in the data (style `clust.use.selected=FALSE`) or only the displayed columns if only a subset are selected using `selVars`.  Data can optionally be transformed (`clust.data.trans="sqrt"`), scaled (`clust.data.trans="scale"`) prior to clustering or used as is (`clust.data.trans="none"`, the default).  Change the width of the dendrogram using style `clust.width=N` where N is the required width as a fraction of the whole diagram width.
 
 ```{r c6A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
 riojaPlot(aber.poll, aber.chron, aber.sel, aber.types,
@@ -280,7 +280,7 @@ RLGH.chron <- RLGH$depths
 # Add new column with Years (CE)
 RLGH.chron$Year <- 1980 - RLGH.chron$Age
 
-# do a pH reconstruction using SWAP modern dataset (see ?SWAP)
+# do a pH reconstruction using SWAP modern dataset (see ?rioja::SWAP)
 data(SWAP)
 # generate a WA model
 SWAP.wa <- WA(SWAP$spec, SWAP$pH)
@@ -700,19 +700,19 @@ riojaPlot(aber.poll, aber.chron,
 
 ### 11. How do I plot surface pollen or diatom data?
 
-`riojaPlot` can plot surface sediment data, you just need to think how to arrange samples on the y-axis.  The example below plots surface sediment diatom data from the Surface Waters Acidification Project (SWAP) dataset (see ?SWAP) for details and citation.  Here we arrange the sampels along the pH gradient and plot the data against Lake code with pH as a secondary y-axis.  
+`riojaPlot` can plot surface sediment data, you just need to think how to arrange samples on the y-axis.  The example below plots surface sediment diatom data from small ponds and pools in SE England collected by Bennion  (1994) (see ?rioja::Ponds) for details.  Here we arrange the samples along the pH gradient and plot the data against Lake name with TP as a secondary y-axis.  
 
 ```{r FAQ11, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
-data(SWAP)
-# reorder the rows in decreasing pH
-o <- order(SWAP$pH, decreasing=TRUE)
-swap.diat <- SWAP$spec[o, ]
-swap.pH <- data.frame(pH=SWAP$pH[o], LakeCode=rownames(SWAP$spec)[o]) 
+data(Ponds)
+# reorder the rows in decreasing TP
+o <- order(Ponds$env$TP, decreasing=TRUE)
+ponds.diat <- Ponds$spec[o, ]
+ponds.TP <- data.frame(TP=round(Ponds$env$TP[o]), LakeName=Ponds$env$Name[o]) 
 # replace taxon codes with names
-colnames(swap.diat) <- SWAP$names[, "TaxonName"]
+colnames(ponds.diat) <- Ponds$names$Name
 # remove rare species
-mx <- apply(swap.diat, 2, max)
-swap.sel <- colnames(swap.diat)[mx > 20]
+mx <- apply(ponds.diat, 2, max)
+ponds.sel <- colnames(ponds.diat)[mx > 10]
 
 # this will plot symbols at zero abundances.  
 # To stop this we write a custom function to plot the symbols
@@ -722,20 +722,25 @@ myfun <- function(x, y, i, nm) {
    points(x, y, cex=0.4, pch=19)
 }
 
-riojaPlot(swap.diat, swap.pH, selVars=swap.sel,
-          yvar.name="LakeCode",
-          sec.yvar.name="pH",
-          sec.yinterval = 0.1,
+# With a large number of samples we would use points but with only 30 
+# in this data we use bars.  Although the data are arranged in order of 
+# increasing TP they are not a temporally or spatially contiguous so 
+# lines or silhouetettes are not appropriate.
+
+riojaPlot(ponds.diat, ponds.TP, selVars=ponds.sel,
+          yvar.name="LakeName",
+          sec.yvar.name="TP",
+          sec.yinterval = 20,
           plot.sec.axis=TRUE,
           scale.percent=TRUE, 
           plot.poly=FALSE,
           plot.line=FALSE,
-          plot.bar=FALSE,
-          plot.symb=TRUE,
+          plot.bar=TRUE,
+          col.bar="black",
           lwd.bar = 2,
           symb.cex=0.4,
           cex.xlabel=0.6, 
-          cex.yaxis=0.3,
+          cex.yaxis=0.6,
           wa.order="topleft", 
           fun.xfront=myfun,
           names.italicise=TRUE,
@@ -745,34 +750,37 @@ riojaPlot(swap.diat, swap.pH, selVars=swap.sel,
 
 ### 12. How do I plot different levels or samples with a different colour?
 
-It is currently only possible to plot different samples with different coloured bars.  Here we extend the example for FAQ 11 above and classify the samples into different groups based on their pH, then plot these different samples with different colours.  We do this by create a character vector of colour names, that corresponds to the samples, then pass this to style `col.sep.bar` and set `sep.bar` to true.
+It is currently only possible to plot different samples with different coloured bars.  Here we extend the example for FAQ 11 above and classify the samples into different groups based on their TP, then plot these different samples with different colours.  We do this by create a character vector of colour names, that corresponds to the samples, then pass this to style `col.sep.bar` and set `sep.bar` to true.  We also create an expression to label the TP axis in the correct units.
 
 ```{r FAQ12, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
-swap.pH2 <- swap.pH %>%  mutate(bar.cols=case_when(pH < 5 ~ "orange",
-                            pH >=5 & pH < 5.5 ~ "red",
-                            pH >= 5.5 & pH < 6.0 ~ "blue",
-                            TRUE ~ "green")) 
+ponds.TP <- ponds.TP %>%  mutate(bar.cols=case_when(TP < 100 ~ "green",
+                            TP >= 100 & TP < 200 ~ "blue",
+                            TP >= 200 & TP < 500 ~ "red",
+                            TRUE ~ "orange")) 
 
-nms <- rep("", ncol(swap.diat))
+ylab <- expression(Total~Phosph.~(mu*gL^{-1}))
 
-riojaPlot(swap.diat, swap.pH, selVars=swap.sel,
-          yvar.name="LakeCode",
-          sec.yvar.name="pH",
-          sec.yinterval = 0.1,
+riojaPlot(ponds.diat, ponds.TP, selVars=ponds.sel,
+          yvar.name="LakeName",
+          sec.yvar.name="TP",
+          sec.ylabel=ylab,
+          sec.yinterval = 20,
           plot.sec.axis=TRUE,
           scale.percent=TRUE, 
           plot.poly=FALSE,
           plot.line=FALSE,
           plot.bar=TRUE,
+          col.bar="black",
           sep.bar=TRUE,
-          lwd.bar = 2,
-          col.sep.bar=swap.pH2$bar.cols,
+          col.sep.bar=ponds.TP$bar.cols,
+          lwd.bar = 10,
           symb.cex=0.4,
           cex.xlabel=0.6, 
-          cex.yaxis=0.3,
+          cex.yaxis=0.6,
           wa.order="bottomleft", 
+          fun.xfront=myfun,
           names.italicise=TRUE,
-          las.axis=1, 
+          las.axis=2, 
           cex.axis=0.5)
 ```
 
@@ -822,11 +830,8 @@ riojaPlot(chon.ordered, chon.year, groups=chon.groups,
 This looks OK but we can "virtually" rotate this figure so it can be viewed as a stacked diagram.  To do this we have to modify the axis labels and orientation of taxon names.  We can't easily do this using riojaPlot styles but we can suppress the plotting of names and x-axis and create a custom function to plot these in any style or position we wish.
 
 ```{r FAQ13B, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
-
 # create list of blank names to suppress taxon names
-
 names <- rep("", ncol(chon.ordered))
-
 myfun <- function(x, y, i, nm) {
   usr <- par("usr") # extract the x and y data limits of the plot
   name <- bquote(italic(.(names(nm)))) #  extract name from nm and italicise it
@@ -852,7 +857,7 @@ riojaPlot(chon.ordered, chon.year, groups=chon.groups,
           col.group=c("darkgreen", "darkgrey", "darkred"),
           plot.bottom.axis=FALSE,
           min.width.pc=10, # set minimum size of x-axes
-          fun.xback=myfun)
+          fun.xfront=myfun)
 ```
 
 ### 14. How do I add my own zones to a diagram?
@@ -880,7 +885,31 @@ addRPZone(rp, 6000, 8000)
 
 # change colour and shading
 addRPZone(rp, 13000, 13500, col="blue", alpha = 0.05)
+
+# The zones above are plotted over the existing diagram.
+# It is possible to plot zones or other annotatiosn behind 
+# the diagram using a cuctom function supplied to style fun.plotback
+# this takes 2 arguments, usr = vector of 4 numbers giving the 
+# coordinates of the plotting area in data units (x is 0-1)
+# and fig,coordinates of the plotting area as fractions of the page size
+
+fun.back <- function(usr, fig) {
+  print(usr)
+  rect(0, 8000, 1, 11000, col="lightblue1", border=NA)
+}
+
+rp <- riojaPlot(aber.poll, aber.chron, aber.sel,
+   yvar.name="Age (years BP)",
+   ymin=6000,
+   ymax=14300,
+   yinterval=500,
+   scale.percent=TRUE,
+   exag=TRUE,
+   fun.plotback=fun.back
+   )
 ```
+
+
 
 ## 11. List of modifiable styles and default values
 
@@ -897,5 +926,7 @@ ft
 ## 12. References
 
 Allen, J.R.M. *et al*. (1999) Rapid environmental changes in southern Europe during the last glacial period. Nature, 400, 740-743.
+
+Bennion, H. (1994) A diatom-phosphorus transfer function for shallow, eutrophic ponds in southeast England. \emph{Hydrobiologia}, \bold{275/276}, 391-410.
 
 Frugone-Álvarez, M. et al. (2020) Volcanism and climate change as drivers in Holocene depositional dynamic of Laguna del Maule (Andes of central Chile - 36S).  Climate of the Past, DOI 10.5194/cp-2019-147.

@@ -3,6 +3,7 @@
 \alias{addRPZone}
 \alias{addRPClust}
 \alias{addRPClustZone}
+\alias{addRPZoneNames}
 \alias{makeStyles}
 \alias{listStyles}
 
@@ -22,6 +23,8 @@ addRPClustZone(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NULL,
 addRPZone(riojaPlot, upper, lower=NULL, xLeft=NULL, xRight=NULL, col="red", 
           alpha=0.1, border=NA, verbose=TRUE, \dots)
 
+addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight=0.99, \dots)
+
 listStyles()
 
 makeStyles(...)
@@ -40,6 +43,8 @@ makeStyles(...)
   \item{xLeft, xRight}{ left and right position of figure on page (as a fraction of page width). }
   \item{verbose}{ show warnings (default TRUE). }
   \item{col, alpha, border}{ colour, alpha value (transparency) and border colour of zones. }
+  \item{zones}{ a data frame with 2 columns, the first giving the y-value to draw the zone label and the second the zones names as character. }
+  \item{showColumn}{ draw a column around the zone names? }
   \item{...}{ additional arguments to control the style of the figure (see details below) or colour of zones. }
 }
 
