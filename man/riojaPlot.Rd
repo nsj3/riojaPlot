@@ -23,7 +23,7 @@ addRPClustZone(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NULL,
 addRPZone(riojaPlot, upper, lower=NULL, xLeft=NULL, xRight=NULL, col="red", 
           alpha=0.1, border=NA, verbose=TRUE, \dots)
 
-addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight=0.99, \dots)
+addRPZoneNames(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight=0.99, \dots)
 
 listStyles()
 

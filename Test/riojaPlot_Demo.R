@@ -575,3 +575,5 @@ plts <- map(fnames[1:9], function(x) { cowplot::ggdraw() + cowplot::draw_image(x
 
 cowplot::plot_grid(plotlist=plts)
 
+x <- 1:10
+usethis::use_data(x)
