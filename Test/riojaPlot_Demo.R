@@ -247,12 +247,106 @@ rp1 <- riojaPlot(poll, chron, groups=types, selVars=names(mx5),
           srt.xlabel=45,
           xRight=0.7)
 
-rp2 <- riojaPlot(pca, chron, riojaPlot=rp, 
+rp2 <- riojaPlot(pca, chron, riojaPlot=rp1, 
           plot.bar=FALSE,
-          xGap=0.02,
+#          xGap=0.01,
           col.axis=NA,
           xRight=0.9,
           fun1=myfun)
 
 addRPClust(rp2, clust)
 addRPClustZone(rp2, clust, xLeft=rp1$box[1], col="red")
+
+
+myfun.back <- function(usr, box) {
+  rect(0, 7500, 1, 10000, col="red", xpd=NA)
+}
+
+rp1 <- riojaPlot(poll, chron, groups=types, selVars=names(mx5),
+          yvar.name="Age (years BP)",
+          ymin=6290, ymax=14250, yinterval=500,
+          sec.yvar.name="Depth (cm)",
+          plot.sec.axis = TRUE,
+          plot.groups=TRUE,
+          plot.cumul=TRUE,
+          scale.percent=TRUE,
+          plot.top.axis=TRUE,
+          ytks1=seq(6000, 14500, by=500),
+          srt.xlabel=45,
+          xRight=0.7, fun.plotback=myfun.back)
+
+
+
+data(Ponds)
+# reorder the rows in decreasing pH
+o <- order(Ponds$env$TP, decreasing=TRUE)
+ponds.diat <- Ponds$spec[o, ]
+ponds.TP <- data.frame(TP=round(Ponds$env$TP[o]), LakeName=Ponds$env$Name[o]) 
+# replace taxon codes with names
+colnames(ponds.diat) <- Ponds$names$Name
+# remove rare species
+mx <- apply(ponds.diat, 2, max)
+ponds.sel <- colnames(ponds.diat)[mx > 10]
+
+# this will plot symbols at zero abundances.  
+# To stop this we write a custom function to plot the symbols
+
+myfun <- function(x, y, i, nm) {
+   x[x > 0.1] <- NA
+   points(x, y, cex=0.4, pch=19)
+}
+
+riojaPlot(ponds.diat, ponds.TP, selVars=ponds.sel,
+          yvar.name="LakeName",
+          sec.yvar.name="TP",
+          sec.yinterval = 20,
+          plot.sec.axis=TRUE,
+          scale.percent=TRUE, 
+          plot.poly=FALSE,
+          plot.line=FALSE,
+          plot.bar=TRUE,
+          col.bar="black",
+#          plot.symb=TRUE,
+          lwd.bar = 2,
+          symb.cex=0.4,
+          cex.xlabel=0.6, 
+          cex.yaxis=0.6,
+          wa.order="topleft", 
+          fun.xfront=myfun,
+          names.italicise=TRUE,
+          las.axis=2, 
+          cex.axis=0.5)
+
+ponds.TP <- ponds.TP %>%  mutate(bar.cols=case_when(TP < 100 ~ "green",
+                            TP >= 100 & TP < 200 ~ "blue",
+                            TP >= 200 & TP < 500 ~ "red",
+                            TRUE ~ "orange")) 
+
+ylab <- expression(Total~Phosph.~(mu*gL^{-1}))
+
+riojaPlot(ponds.diat, ponds.TP, selVars=ponds.sel,
+          yvar.name="LakeName",
+          sec.yvar.name="TP",
+          sec.ylabel=ylab,
+          sec.yinterval = 20,
+          plot.sec.axis=TRUE,
+          scale.percent=TRUE, 
+          plot.poly=FALSE,
+          plot.line=FALSE,
+          plot.bar=TRUE,
+          col.bar="black",
+          sep.bar=TRUE,
+          col.sep.bar=ponds.TP$bar.cols,
+          lwd.bar = 10,
+          symb.cex=0.4,
+          cex.xlabel=0.6, 
+          cex.yaxis=0.6,
+          wa.order="bottomleft", 
+          fun.xfront=myfun,
+          names.italicise=TRUE,
+          las.axis=2, 
+          cex.axis=0.5)
+
+
+      
+

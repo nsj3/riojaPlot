@@ -188,8 +188,10 @@ makeStyles <- function(...) {
    style$xLeft <- NA
    style$yBottom <- 0.05
    style$yTop <- NA
-   style$fun1 <- NA
-   style$fun2 <- NA
+   style$fun.xback <- NA
+   style$fun.xfront <- NA
+   style$fun.plotback <- NA
+   style$fun.yaxis <- NA
    style$ylabPos <- NA
    style$xlabPos <- 0.1
    style$xSpace <- 0.01
@@ -294,10 +296,14 @@ makeStyles <- function(...) {
      yvar <- mydata$chron[, 1, drop=FALSE]
      yvarName <- colnames(mydata$chron)[1]
    }
-   if (is(style$fun1, "logical"))
-     style$fun1 <- NULL
-   if (is(style$fun2, "logical"))
-     style$fun2 <- NULL
+   if (is(style$fun.xback, "logical"))
+     style$fun.xback <- NULL
+   if (is(style$fun.xfront, "logical"))
+     style$fun.xfront <- NULL
+   if (is(style$fun.plotback, "logical"))
+     style$fun.plotback <- NULL
+   if (is(style$fun.yaxis, "logical"))
+     style$fun.yaxis <- NULL
    if (is.na(style$ylabPos))
      style$ylabPos <- NULL
 
@@ -392,6 +398,8 @@ makeStyles <- function(...) {
       style$yLabels <- yvar[, 1, drop=TRUE]
       yvar <- data.frame(SampleNo=1:length(yvar[, 1, drop=TRUE]))
       style$ytks1 <- yvar[, 1, drop=TRUE]
+      expan <- abs(diff(range(yvar)))
+      ylim <- c(min(yvar)-expan*0.01, max(yvar)+expan*0.01)
    } else {
       ylim <- range(yvar[, 1], na.rm=TRUE)
       if (!is.na(style$ymin) & is.na(style$ymax)) {
@@ -416,7 +424,7 @@ makeStyles <- function(...) {
    doSecYvar <- FALSE
    secYvar <- NULL
    yLab <- yvarName
-   if (nchar(style$ylabel)>0) {
+   if (nchar(style$ylabel[1])>0) {
       yLab <- style$ylabel
    }
    if (style$plot.sec.axis & nchar(stringr::str_trim(secYvarName)) > 0) {
@@ -429,7 +437,7 @@ makeStyles <- function(...) {
             message("Secondary Y axis variable must be numeric, not character.")
          } else {
             doSecYvar <- TRUE
-            if (nchar(style$sec.ylabel)>0) {
+            if (nchar(style$sec.ylabel[1])>0) {
                secYvarName <- style$sec.ylabel
             }
             yvar <- as.data.frame(cbind(yvar, secYvar))
@@ -465,7 +473,7 @@ makeStyles <- function(...) {
    }
    
 # Groups   
-   funlist <- lapply(1:ncol(d), function(x) NULL)
+   funlist <- style$fun2
    
    if (style$plot.cumul) {
 #      groupData <<- t(apply(d, 1, 
@@ -483,7 +491,8 @@ makeStyles <- function(...) {
       d <- data.frame(d, Cumulative=c(100, rep(0, nrow(d)-1)))
       style$x.names <- c(style$x.names, "Cumulative")
       nCol <- ncol(d)
-      funlist <- lapply(1:(nCol), function(x) NULL)
+      if (is.null(funlist)) 
+         funlist <- lapply(1:(nCol), function(x) NULL)
       funlist[[nCol]] <- plotCumul
       style$groupColours <- c(style$groupColours, NA)
 #      cumulLine <<- style$plot.cumul.line
@@ -496,9 +505,9 @@ makeStyles <- function(...) {
       lwd.axis <- style$lwd.axis
       col.axis <<- style$col.axis
       col.axis <- style$col.axis
-   } else {
-     funlist <- style$fun2
-   }
+   } # else {
+#     funlist <- style$fun2
+#   }
    
    fin <- par("fin")
    xSpace <- style$xSpace * 10 / fin[1]
@@ -563,7 +572,7 @@ makeStyles <- function(...) {
                 y.tks.labels=style$yLabels, col.bg=NULL, col.exag=style$col.exag, exag.mult=style$exag.mult, 
                 x.names=style$x.names, fun2=funlist, xSpace=xSpace, tcl=style$tcl,
                 clust.width=style$clust.width, xRight=style$xRight, cumul.mult=style$cumul.mult, 
-                orig.fig=orig.fig, exag.alpha=style$exag.alpha, fun1=style$fun1,
+                orig.fig=orig.fig, exag.alpha=style$exag.alpha, fun1=style$fun.back,
                 ylabPos=style$ylabPos, x.pc.omit0=style$x.pc.omit0, lwd.poly.line=style$lwd.poly.line,
                 lwd.line=style$lwd.line, col.exag.line=style$col.exag.line,
                 lwd.exag.line=style$lwd.exag.line, lwd.axis=style$lwd.axis, col.axis=style$col.axis, 
@@ -571,7 +580,8 @@ makeStyles <- function(...) {
                 omitMissing=style$omitMissing, col.sep.bar=style$col.sep.bar, sep.bar=style$sep.bar,
                 plot.top.axis=style$plot.top.axis, plot.bottom.axis=style$plot.bottom.axis,
                 xlabPos=style$xlabPos, las.yaxis=style$las.yaxis,
-                y.axis=style$plot.yaxis, xLeft=style$xLeft, add=!style$start.new.plot)
+                y.axis=style$plot.yaxis, xLeft=style$xLeft, add=!style$start.new.plot, 
+                fun.plotback=style$fun.plotback, fun.yaxis=style$fun.yaxis)
 
    if (!is.null(clust)) {
      if (style$plot.zones == "auto") {
@@ -605,7 +615,7 @@ makeStyles <- function(...) {
                   col.bg=NULL, fun1=NULL, fun2=NULL, add=FALSE,  
                   cumul.mult = 1.0, col.exag.line=NA, lwd.exag.line=0.6, lwd.axis=1, 
                   col.axis="black", omitMissing=TRUE, plot.top.axis=FALSE, plot.bottom.axis=TRUE, 
-                  xlabPos=0.1, las.yaxis=1, ...)
+                  xlabPos=0.1, las.yaxis=1, fun.plotback=NULL, fun.yaxis=NULL, ...)
 {
 
    d <- as.data.frame(d)
@@ -897,7 +907,6 @@ makeStyles <- function(...) {
    }
    usr1 <- c(0, 1, ylim)
 
-
    if (y.axis) {
      mgpX <- if (is.null(mgp)) { c(3, max(0.0, 0.3 + 0.1 - tcll), 0.3) } else { mgp }
 
@@ -939,7 +948,15 @@ makeStyles <- function(...) {
 
    figs <- vector("list", length=nsp)
    usrs <- vector("list", length=nsp)
-  
+
+   if(!is.null(fun.plotback)) {
+      box=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop)     
+      myfig <- par("fig")
+      par(fig=box)
+      fun.plotback(usr1, box)
+      par(fig=myfig)
+   }
+      
    for (i in 1:nsp) {
      ty <- ifelse(plot.line[i], "l", "n")
 

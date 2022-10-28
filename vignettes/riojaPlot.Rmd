@@ -419,18 +419,18 @@ rp <- riojaPlot(mag, mag.chron[, "Age BP", drop=FALSE],
           plot.symb=TRUE, 
           plot.poly=FALSE, 
           symb.cex=0.3,
-          fun2=fun.gam)
+          fun.xfront=fun.gam)
 
 rp1 <- riojaPlot(loi, loi.chron[, "Age BP", drop=FALSE], 
            riojaPlot=rp,
            xRight=0.5, 
            scale.minmax=FALSE, plot.bar=F, plot.line=F, plot.symb=TRUE, 
-           symb.cex=0.3, fun2=fun.gam)
+           symb.cex=0.3, fun.xfront=fun.gam)
 riojaPlot(BSi, BSi.chron[, "Age BP", drop=FALSE], 
            riojaPlot=rp1,
            xRight=0.7, 
            scale.minmax=FALSE, plot.bar=FALSE, plot.line=FALSE, plot.symb=TRUE, 
-           symb.cex=0.3, fun2=fun.gam)
+           symb.cex=0.3, fun.xfront=fun.gam)
 ```
 
 ## 10. Frequently asked questions
@@ -695,7 +695,7 @@ riojaPlot(aber.poll, aber.chron,
    plot.line=FALSE,
    lwd.bar=0.6,
    exag=TRUE,
-   fun2=funlist)
+   fun.xfront=funlist)
 ```
 
 ### 11. How do I plot surface pollen or diatom data?
@@ -737,7 +737,7 @@ riojaPlot(swap.diat, swap.pH, selVars=swap.sel,
           cex.xlabel=0.6, 
           cex.yaxis=0.3,
           wa.order="topleft", 
-          fun1=myfun,
+          fun.xfront=myfun,
           names.italicise=TRUE,
           las.axis=2, 
           cex.axis=0.5)
@@ -852,7 +852,7 @@ riojaPlot(chon.ordered, chon.year, groups=chon.groups,
           col.group=c("darkgreen", "darkgrey", "darkred"),
           plot.bottom.axis=FALSE,
           min.width.pc=10, # set minimum size of x-axes
-          fun1=myfun)
+          fun.xback=myfun)
 ```
 
 ### 14. How do I add my own zones to a diagram?

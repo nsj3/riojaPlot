@@ -86,7 +86,7 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{xLeft, xRight}}{ left and right hand position of plot (as fraction of page width). Will be determined automatically depending of label sizes, override to fine-tune. }
   \item{\code{yTop, yBottom}}{ top and bottom positions of plot (as fraction of page height). Will be determined automatically depending of label sizes, override to fine-tune. yBottom default is 0.05, increase if axis labels are truncated. }
   \item{\code{las.axis}}{ orientation of x-axis labels (1=horz, 2=vert, default 1). }
-  \item{\code{fun1, fun2}}{ custom functions of add elements to a plot above (fun2) or below (fun1) data. See details. }
+  \item{\code{fun.xback, fun.xfront}}{ custom functions of add elements to a plot above (fun.xfront) or behind (fun.xback) data. See below. }
   \item{\code{x.pc.omit0}}{ omit zero value of axis values when scaling for percent data (default TRUE). }
   \item{\code{xSpace}}{ space between individual graphs (fraction of page width, default=0.01). }
   \item{\code{xGap}}{ space between datasets plotted by repeated calls to riojaPlot (fraction of page width, default=0.01). }
@@ -99,6 +99,9 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{cumulSpace}}{ gap to leave between top axis and cumulative plot legend.  Default NA for riojaPlot to guess. }
   
 }
+
+\code{fun.xback} and \code{fun.xfront} are user-defined functions of the form `myfun(x, y, i, nm)` that pass four arguments: x and y values, the index of the plot (i, from 1 to nplots, left to right) and the variable name (nm) to be plotted, as a named character vector.  
+
 \code{addRPClust} adds a dendrogram to an existing riojaPlot diagram.
 
 \code{addRPZone} adds user-defined horizontal zone lines to an existing diagram. 
