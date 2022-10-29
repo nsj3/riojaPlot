@@ -1,6 +1,7 @@
 library(riojaPlot)
 options(tidyverse.quiet = TRUE)
 library(tidyverse)
+library(readxl)
 
 # use built-in data from Abernethy Forest
 # see ?aber for citation
@@ -96,7 +97,7 @@ mx5_names <- poll %>%
   select(where(~ fun.max(.x, 5))) %>%
   names()
 
-riojaPlot(poll, chron, selVars=names(mx5),
+riojaPlot(poll, chron, selVars=mx5_names,
           yvar.name="Age (years BP)",
           ymin=6000, ymax=14400, yinterval=500,
           sec.yvar.name="Depth (cm)",
@@ -196,7 +197,7 @@ riojaPlot(poll, chron, groups=types, selVars=names(mx5),
 
 # fine tune y-axis scale
 sapply(chron, range)
-riojaPlot(poll, chron, groups=types, selVars=names(mx5),
+riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           yvar.name="Age (years BP)",
           ymin=6290, ymax=14250, yinterval=500,
           sec.yvar.name="Depth (cm)",
@@ -215,7 +216,7 @@ pca <- vegan::rda(sqrt(poll)) %>%
   vegan::scores(display="sites") %>%
   as_tibble()
 
-rp <- riojaPlot(poll, chron, groups=types, selVars=names(mx5),
+rp <- riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           yvar.name="Age (years BP)",
           ymin=6290, ymax=14250, yinterval=500,
           sec.yvar.name="Depth (cm)",
@@ -238,7 +239,7 @@ riojaPlot(pca, chron, riojaPlot=rp,
 
 # Custom plotting function
 
-rp <- riojaPlot(poll, chron, groups=types, selVars=names(mx5),
+rp <- riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           yvar.name="Age (years BP)",
           ymin=6290, ymax=14250, yinterval=500,
           sec.yvar.name="Depth (cm)",
@@ -271,7 +272,7 @@ riojaPlot(pca, chron, riojaPlot=rp,
 
 clust <- chclust(dist(sqrt(poll)))
 
-rp1 <- riojaPlot(poll, chron, groups=types, selVars=names(mx5),
+rp1 <- riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           yvar.name="Age (years BP)",
           ymin=6290, ymax=14250, yinterval=500,
           sec.yvar.name="Depth (cm)",
@@ -296,7 +297,7 @@ addRPClustZone(rp2, clust, xLeft=rp1$box[1], col="red")
 # Add a zone column with names
 
 clust <- chclust(dist(sqrt(poll)))
-rp1 <- riojaPlot(poll, chron, groups=types, selVars=names(mx5),
+rp1 <- riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           yvar.name="Age (years BP)",
           ymin=6290, ymax=14250, yinterval=500,
           sec.yvar.name="Depth (cm)",
@@ -603,3 +604,26 @@ plts <- map(fnames[1:9], function(x) { cowplot::ggdraw() + cowplot::draw_image(x
 
 cowplot::plot_grid(plotlist=plts)
 
+
+# Other customization
+
+mx5_names <- poll %>% 
+  select(where(~ fun.max(.x, 5))) %>%
+  names()
+
+fun.box <- function(x, y, i, nm) {
+  usr <- par("usr")
+  fig <- par("fig")
+#  usr[4] <- 1000
+  rect(usr[1], usr[3], usr[2], usr[4], col="grey95", border=NA, xpd=NA)
+}
+
+yticks <- seq(6000, 15000, by=500)
+riojaPlot(poll, chron, selVars=mx5_names,
+          yvar.name="Age (years BP)",
+#          ymin=6000, ymax=14400, yinterval=500,
+          sec.yvar.name="Depth (cm)",
+          plot.sec.axis = TRUE,
+          scale.percent=TRUE,
+          ytks1=yticks,
+          fun.xback=fun.box, xSpace=0.005)

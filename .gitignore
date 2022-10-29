@@ -11,3 +11,4 @@ R/MLRC3.r
 ^Test.*
 /doc/
 /Meta/
+^Test/svgs/*.*
