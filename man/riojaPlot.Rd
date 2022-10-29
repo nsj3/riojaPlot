@@ -59,7 +59,7 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{plot.sec.axis}}{ show secondary y-axis.  Default FALSE. }
   \item{\code{yLabel, secyLabel}} { labels for the primary and secondary y-axes.  Uses column names if not specified. }
   \item{\code{scale.percent}}{ scale the diagram for percentage data (default TRUE). }
-  \item{\code{scale.minmax}}{ only label min and max values of x-axes to avoid crowding (default FALSE). }
+  \item{\code{scale.minmax}}{ for non-percentage data, only label min and max values of x-axes to avoid crowding (default FALSE). }
   \item{\code{y.rev}}{ reverse the y-axis (default TRUE). }
   \item{\code{ymin, ymax, sec.ymin, sec.ymax}}{ minimum and maximum of primary and secondary y-axes. }
   \item{\code{yinterval, sec.yinterval}}{ intervals for primary and secondary y-axes. }
@@ -93,6 +93,9 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{las.axis}}{ orientation of x-axis labels (1=horz, 2=vert, default 1). }
   \item{\code{fun.xback, fun.xfront}}{ custom functions of add elements to a plot above (fun.xfront) or behind (fun.xback) data. See below. }
   \item{\code{x.pc.omit0}}{ omit zero value of axis values when scaling for percent data (default TRUE). }
+  \item{\code{x.pc.inc}}{ for percentage diagrams single value or numeric vector of intervals for x-axes. }
+  \item{\code{min.width.pc}}{ for percentage diagrams the minimim data width of the x-axes. }
+  \item{\code{graph.widths}}{ vector of relative widths for each graph (default 1). }
   \item{\code{xSpace}}{ space between individual graphs (fraction of page width, default=0.01). }
   \item{\code{xGap}}{ space between datasets plotted by repeated calls to riojaPlot (fraction of page width, default=0.01). }
   

@@ -79,7 +79,10 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, r
    if ("xGap" %in% argNames) {
      style$xLeft <- style$xLeft + as.numeric(args["xGap"])
    }
-   
+   if (length(style$x.pc.inc)>1 & length(style$x.pc.inc) != ncol(x))
+      stop("x.pc.inc should be a logical vector of length equal to 1 or the number of columns of x")
+   if (length(style$graph.widths)>1 & length(style$graph.widths) != ncol(x))
+      stop("graph.widths should be a logical vector of length equal to 1 or the number of columns of x")
    if (length(style$plot.poly)>1 & length(style$plot.poly) != ncol(x))
       stop("plot.poly should be a logical vector of length equal to 1 or the number of columns of x")
    if (length(style$plot.line)>1 & length(style$plot.line) != ncol(x))
@@ -102,6 +105,10 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, r
        style$plot.symb <- rep(style$plot.symb, ncol)
    if (length(style$exag)==1)
        style$exag <- rep(style$exag, ncol)
+   if (length(style$graph.widths)==1)
+       style$graph.widths <- rep(style$graph.widths, ncol)
+   if (length(style$x.pc.inc)==1)
+       style$x.pc.inc <- rep(style$x.pc.inc, ncol)
 
    .riojaPlot1(plotdata, style, riojaPlot=riojaPlot, verbose=verbose)  
 #   on.exit({
@@ -167,6 +174,7 @@ makeStyles <- function(...) {
    style$clust.data.trans <- "none"
    style$clust.use.selected <- FALSE
    style$clust.width <- 0.05
+   style$graph.widths <- 1
    style$exag <- FALSE
    style$col.exag <- "auto"
    style$col.exag.line <- NA
@@ -212,6 +220,7 @@ makeStyles <- function(...) {
    style$plot.yaxis <- TRUE
    style$start.new.plot <- TRUE
    style$xGap <- 0.01
+   style$x.pc.inc <- 10
    
 #   style$orig.fig <- c(0, 1, 0, 1)
    args <- list(...)
@@ -246,6 +255,8 @@ makeStyles <- function(...) {
    names(style$plot.line) <- colnames(mydata$spec)    
    names(style$plot.symb) <- colnames(mydata$spec)    
    names(style$exag) <- colnames(mydata$spec)
+   names(style$x.pc.inc) <- colnames(mydata$spec)
+   names(style$graph.widths) <- colnames(mydata$spec)
 
    if (!is.null(mydata$selVars) & length(mydata$selVars) > 2) {
       tmp <- !(mydata$selVars %in% colnames(mydata$spec))
@@ -262,6 +273,10 @@ makeStyles <- function(...) {
       style$plot.line <- style$plot.line[mydata$selVars[!tmp]]
       style$plot.bar <- style$plot.bar[mydata$selVars[!tmp]]
       style$plot.symb <- style$plot.symb[mydata$selVars[!tmp]]
+      style$graph.widths <- style$graph.widths[mydata$selVars[!tmp]]
+#      print(style$graph.widths)
+#      style$min.width.pc <- style$min.width.pc[mydata$selVars[!tmp]]
+      style$x.pc.inc <- style$x.pc.inc[mydata$selVars[!tmp]]
    } else {
       d <- mydata$spec
    }
@@ -334,9 +349,17 @@ makeStyles <- function(...) {
       style$exag <- FALSE
    }
    if (style$names.break.long) {
+     warn <- options()$warn
+     options(warn=-1)    
      style$x.names <- sjmisc::word_wrap(style$x.names, style$names.break.n)
+     options(warn=warn)    
    }
    if (style$names.italicise) {
+#     dont_italicize = c("\\(.*?\\)", "spp", "sp\\.", "type", "-complex", "[Oo]ther", "var\\.")
+#     style$x.names <- as.expression(
+#            sapply(style$x.names, 
+#                   function(x) unlist(tidypaleo::label_species(x, dont_italicize=dont_italicize)[[1]]))
+#     )
      style$x.names <- as.expression(sapply(style$x.names, function(x) bquote(italic(.(x))) ))
    }
    
@@ -558,6 +581,8 @@ makeStyles <- function(...) {
      mclust <- clust
 
    if (style$plot.cumul) {
+     style$x.pc.inc <- c(style$x.pc.inc, 10)
+     style$graph.widths <- c(style$graph.widths, 1)
      style$exag <- c(style$exag, FALSE)
      style$plot.poly <- c(style$plot.poly, FALSE)
      style$plot.bar <- c(style$plot.bar, FALSE)
@@ -591,7 +616,8 @@ makeStyles <- function(...) {
                 plot.top.axis=style$plot.top.axis, plot.bottom.axis=style$plot.bottom.axis,
                 xlabPos=style$xlabPos, las.yaxis=style$las.yaxis,
                 y.axis=style$plot.yaxis, xLeft=style$xLeft, add=!style$start.new.plot, 
-                fun.plotback=style$fun.plotback, fun.yaxis=style$fun.yaxis)
+                fun.plotback=style$fun.plotback, fun.yaxis=style$fun.yaxis, 
+                graph.widths=style$graph.widths, x.pc.inc=style$x.pc.inc)
 
    if (!is.null(clust)) {
      if (style$plot.zones == "auto") {
@@ -660,8 +686,6 @@ makeStyles <- function(...) {
       }
    }
 
-   
-     
    yNames <- c("", "")
    if (!is.null(ylabel)) {
       if (length(ylabel)==1)
@@ -694,8 +718,8 @@ makeStyles <- function(...) {
    nsam <- nrow(d)
 
    if (scale.percent & length(x.pc.inc) > 1) {
-      if (length(x.pc.inc) != nsp) 
-         stop("length of x.pc.inc should equal number of curves")
+#      if (length(x.pc.inc) != nsp) 
+#         stop("length of x.pc.inc should equal number of curves")
    } else {
       x.pc.inc <- rep(x.pc.inc[1], nsp)
    }
@@ -708,8 +732,8 @@ makeStyles <- function(...) {
    par(mai = c(0, 0, 0, 0))
    if (length(graph.widths) == 1)
       graph.widths <- rep(1, nsp)
-   if (length(graph.widths) != nsp) 
-      stop("Length of graph.widths should equal number of curves")
+#   if (length(graph.widths) != nsp) 
+#      stop("Length of graph.widths should equal number of curves")
    if (length(exag) == 1)
       exag <- rep(exag[1], nsp)
    if (length(exag) != nsp) 
@@ -783,25 +807,27 @@ makeStyles <- function(...) {
      cc.line <- cc.line[opt.order]
      cc.symb <- cc.symb[opt.order]
      cc.bar <- cc.bar[opt.order]
+     x.pc.inc <- x.pc.inc[opt.order]
    }
    
    if (scale.percent) {
       colM <- apply(d, 2, max, na.rm=TRUE)
-      colM <- floor((colM + 4.9)/5) * 5
+#      colM <- floor((colM + 4.9)/5) * 5
       colM[colM < min.width] <- min.width
+#      if ("CUMULATIVE" %in% toupper(x.names))
+#        graph.widths <- c(graph.widths, 1)
+      colM <- colM * graph.widths
       colM.sum <- sum(colM, na.rm=TRUE)
    } else {
       colM.sum <- sum(graph.widths, na.rm=TRUE)
       colM <- graph.widths
    }
-
    if ("CUMULATIVE" %in% toupper(x.names)) {
       tmp <- which("CUMULATIVE" == toupper(x.names))
       colM.sum <- colM.sum - colM[tmp] + (colM[tmp] * cumul.mult)
       colM[tmp] <- colM[tmp] *  cumul.mult
    }
-   
-   
+
 # determine fig margins  
 
    ylab2 <- NULL
@@ -999,9 +1025,9 @@ makeStyles <- function(...) {
      if (scale.percent) {
         inc2 <- inc * colM[i]
         par(fig = figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
-        xxlim <- 
-        plot(0, 0, cex = 0.5, xlim = c(0, ifelse(cumulPlot, colM[i]/cumul.mult, colM[i])), axes = FALSE, 
-           xaxs = "i", type = "n", yaxs = "i", ylim = ylim, xlab="", ylab="", ...)
+        xxlim <- c(0, ifelse(cumulPlot, colM[i]/cumul.mult, colM[i]/graph.widths[i]))
+        plot(0, 0, cex = 0.5, xlim = xxlim, 
+             axes = FALSE, xaxs = "i", type = "n", yaxs = "i", ylim = ylim, xlab="", ylab="", ...)
 #        plot(0, 0, cex = 0.5, xlim = c(0, colM[i]), axes = FALSE, 
 #           xaxs = "i", type = "n", yaxs = "i", ylim = ylim, xlab="", ylab="", ...)
         if (!is.null(col.bg))
@@ -1064,8 +1090,9 @@ makeStyles <- function(...) {
        if (!is.null(fun2[[i]])) {
           fun2[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
        }
-       if (!cumulPlot)
+       if (!cumulPlot) {
           xlabb <- seq(0, colM[i], by = x.pc.inc[i])
+       }
        else
           xlabb <- seq(0, colM[i]/cumul.mult, by = x.pc.inc[i])
        if (x.axis[i]) {
@@ -1411,7 +1438,6 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
       names <- names(y)
       text(0.5, y, labels=names, adj=c(0.5, 0.5), ...)
       if (showColumn) {
-        print(usr)
          segments(usr[1], usr[3], usr[1], usr[4], col=riojaPlot$style$col.axis, xpd=NA, ...)
          segments(usr[2], usr[3], usr[2], usr[4], col=riojaPlot$style$col.axis, xpd=NA, ...)
       }

@@ -16,10 +16,10 @@ importFrom(methods, is)
 
 importFrom(forcats, fct_explicit_na)
 
-## mgcv
+# importFrom(tidypaleo, label_geochem, label_species)
+
 importFrom(mgcv, gam, s)
 
-## grDevices
 importFrom("grDevices", "col2rgb", "rgb", "dev.size")
 
 import(graphics)

@@ -1,7 +1,6 @@
-suppressPackageStartupMessages(library(riojaPlot))
-suppressPackageStartupMessages(library(tidyverse))
-
 library(riojaPlot)
+options(tidyverse.quiet = TRUE)
+library(tidyverse)
 
 # use built-in data from Abernethy Forest
 # see ?aber for citation
@@ -20,11 +19,11 @@ chron <- aber$ages
 head(chron)
 
 # plot on depth scale (depth is the first column in chron)
-riojaPlot::riojaPlot(poll, chron)
+riojaPlot(poll, chron)
 
 # plot as percentage data
 # default is to plot darkgreen silhouettes with black outline
-riojaPlot::riojaPlot(poll, chron,
+riojaPlot(poll, chron,
           scale.percent=TRUE)
 
 #turn off bars
@@ -71,9 +70,16 @@ riojaPlot(poll, chron,
 
 # remove rare taxa
 # either remove from original data
+# The base R way
 mx <- apply(poll, 2, max) > 5
 mx
 poll2 <- poll[, mx]
+
+# The tidyverse way
+fun.max <- function(x, cut=2) {
+   max(x, na.rm=TRUE) > cut 
+}
+poll2 <- poll %>% select(where(~ fun.max(.x, 5)))
 
 riojaPlot(poll2, chron,
           yvar.name="Age (years BP)",
@@ -83,8 +89,13 @@ riojaPlot(poll2, chron,
           scale.percent=TRUE)
 
 # or give a character vector of names to include 
-mx5 <- mx[mx]
-mx5
+mx5_names <- names(mx[mx])
+mx5_names
+
+mx5_names <- poll %>% 
+  select(where(~ fun.max(.x, 5))) %>%
+  names()
+
 riojaPlot(poll, chron, selVars=names(mx5),
           yvar.name="Age (years BP)",
           ymin=6000, ymax=14400, yinterval=500,
@@ -94,13 +105,18 @@ riojaPlot(poll, chron, selVars=names(mx5),
 
 # show groups
 head(aber$names)
+
+# need to pass a data frame with 2 cols
+# col 1 = variable names spelled exactly as in data
+# character vector or factor of group names
 types <- aber$names[, -1]
+types
 riojaPlot(poll2, chron, groups=types,
           yvar.name="Age (years BP)",
           ymin=6000, ymax=14400, yinterval=500,
           sec.yvar.name="Depth (cm)",
           plot.sec.axis = TRUE,
-          plot.groups=TRUE,
+          plot.groups=TRUE,         # turns on plotting of groups
           scale.percent=TRUE)
 
 # show cumulative plot
@@ -109,8 +125,8 @@ riojaPlot(poll2, chron, groups=types,
           ymin=6000, ymax=14400, yinterval=500,
           sec.yvar.name="Depth (cm)",
           plot.sec.axis = TRUE,
-          plot.groups=TRUE,
-          plot.cumul=TRUE,
+          plot.groups=TRUE,   # turns on plotting of groups
+          plot.cumul=TRUE,    # turns on cumulative plot
           scale.percent=TRUE)
 
 # reorder groups
@@ -143,11 +159,11 @@ riojaPlot(poll, chron, groups=types, selVars=names(mx5),
           plot.sec.axis = TRUE,
           plot.groups=TRUE,
           plot.cumul=TRUE,
-          names.italicise=TRUE,
+          names.italicise=TRUE,  # italicise names
           scale.percent=TRUE,
-          plot.top.axis=TRUE,
-          srt.xlabel=45,
-          cex.axis=0.5)
+          plot.top.axis=TRUE,    # add an x-axis at top
+          srt.xlabel=45,         # rotate names
+          cex.axis=0.5)          # reduce font of x-axes
 
 # add dendrogram
 riojaPlot(poll, chron, groups=types, selVars=names(mx5),
@@ -160,7 +176,7 @@ riojaPlot(poll, chron, groups=types, selVars=names(mx5),
           scale.percent=TRUE,
           srt.xlabel=45,
           cex.axis=0.5,
-          do.clust=TRUE,
+          do.clust=TRUE,     # perform clustering (default is to sqrt-transform data first)
           plot.clust=TRUE)
 
 riojaPlot(poll, chron, groups=types, selVars=names(mx5),
@@ -518,16 +534,28 @@ riojaPlot(BSi, BSi.chron[, "Age BP", drop=FALSE],
            scale.minmax=FALSE, plot.bar=FALSE, 
            plot.line=FALSE, plot.symb=TRUE, symb.cex=0.3, fun.xfront=fun.gam)
 
+
+# changing widths
+
+widths <- rep(1, ncol(poll))
+inc <- rep(10, ncol(poll))
+mx <- apply(poll, 2, max)
+selTaxa <- names(mx[mx > 2])
+sel <- which(mx < 5)
+widths[sel] <- 5
+inc[sel] <- 1
+
+riojaPlot(poll, chron, selVars=selTaxa,
+          scale.percent=TRUE,
+          graph.widths=widths,
+          min.width.pc=5, 
+          x.pc.inc=inc,
+          cex.axis=0.5,
+          las.axis=2)
+
 # combining multiple plots
 
-svg("Test/test.svg", width=10, height=6)
-riojaPlot(poll, chron,
-          yvar.name="Age (years BP)",
-          ymin=6000, ymax=14400, yinterval=500,
-          scale.percent=TRUE,
-          )
-dev.off()
-
+library(readxl)
 allpoll_list <- rio::import_list("Test/Woodbridge_et_al_2014_Data.xlsx")
 lcc_lookup <- read_excel("Test/LCC_info.xlsx", sheet="LCC_Lookup")
 
@@ -566,8 +594,8 @@ fun_plot <- function(x, y) {
    dev.off()
 }
 
-  allpoll_nested[1:16, ] %>%
-    walk2(.x=.$polldata, .y=.$Site, .f=~fun_plot(.x, .y))
+allpoll_nested[1:9, ] %>%
+  walk2(.x=.$polldata, .y=.$Site, .f=~fun_plot(.x, .y))
 
 library(cowplot)
 fnames <- list.files("Test/svgs", "*.svg", full.names=TRUE)
@@ -575,5 +603,3 @@ plts <- map(fnames[1:9], function(x) { cowplot::ggdraw() + cowplot::draw_image(x
 
 cowplot::plot_grid(plotlist=plts)
 
-x <- 1:10
-usethis::use_data(x)

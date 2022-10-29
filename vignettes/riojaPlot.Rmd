@@ -3,16 +3,18 @@ title: 'riojaPlot: User Guide (Version `r read.dcf("../DESCRIPTION", fields="Ver
 author: "Steve Juggins"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette:
-    toc: yes
-  html_document:
-    toc: true
-    df_print: paged
   pdf_document:
     highligh: null
     toc: true
     toc_depth: 3
     number_sections: no
+  html_document:
+    toc: true
+    df_print: paged
+  rmarkdown::html_vignette:
+    toc: yes
+params: 
+  output_dir: "vignettes"
 vignette: > 
     %\VignetteIndexEntry{riojaPlot User Guide} 
     %\VignetteEncoding{UTF-8}
@@ -400,7 +402,7 @@ riojaPlot(BSi, BSi.chron[, "Age BP", drop=FALSE],
 
 In the above example the physical / chemical variables are measured on a large number of samples and we plot with symbols because these display the variability in the data more clearly than lines. It would be useful to fit a smooth through these data to highlight the trends.  Here we plot the three phys/chem variables and fit a gam to each curve using a custom function to add the smooth to each plot.
 
-```{r c9A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE, eval=TRUE}
+```{r c9A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
 fun.gam <- function(x, y, i, nm) {
   tmp <- data.frame(x=y, y=x)
   gam <- mgcv::gam(y ~ s(x, k=50), data=tmp)
@@ -582,7 +584,7 @@ selbar <- rep(FALSE, 9)
 selline <- rep(TRUE, 9)
 selline[1] <- FALSE
 
-rp <- riojaPlot(maule.data, maule.chron, 
+riojaPlot(maule.data, maule.chron, 
           yvar.name="age_BP", 
           ymin=-100, 
           ymax=13300,
@@ -643,8 +645,7 @@ riojaPlot(maule.data, maule.chron, groups=groups,
 USe the style `las=2`.  You may also need to create a larger space at the bottom of the figure using yBottom.
 
 ```{r FAQ9, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
-myticks <- seq(0, 13000, by=500)
-rp <- riojaPlot(maule.data, maule.chron, groups=groups,
+riojaPlot(maule.data, maule.chron, groups=groups,
           yvar.name="age_BP", 
           ymin=-100, 
           ymax=13300,
@@ -698,11 +699,61 @@ riojaPlot(aber.poll, aber.chron,
    fun.xfront=funlist)
 ```
 
-### 11. How do I plot surface pollen or diatom data?
+### 11. How do I change the widths of individual graphs?
+
+In the above example we plotted rare types as symbols.  In the example we can expand the x-axis for rare types.
+
+For percentage diagrams the width of each graph is scaled uniformly so the percentage values for each graph are the same.  We can change these using the style `graph.widths` which takes a vector of relative widths.  We can also change the x-axis labels for each graph by supplying a numeric vector to style `x.inc.pc` to set the interval for x-values.  Here we hide columns with maximum relative abundance < 2%, and show those taxa with max < 5% as curves with 5 * normal width, and set the x-interval for these to 1% (rather than the default of 10%).  We could, of course, chose the columns manually to have complete control over what is hidden and shown with expanded axes.
+
+```{r FAQ11A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
+mx <- apply(aber.poll, 2, max) # calculate max % of each column
+widths <- rep(1, ncol(aber.poll)) # generate numeric vector of widths, set to 1
+inc <- rep(10, ncol(aber.poll)) # generate numeric vector of x-intervals, set to 10
+selTaxa <- names(mx[mx > 2]) # generate character vector of column names to include in the figure
+sel <- which(mx < 5) # generate a logical vector of columns to expand
+widths[sel] <- 5 # set widths to 5 times normal width
+inc[sel] <- 1 # set x-interval to 1%
+
+riojaPlot(aber.poll, aber.chron, selVars=selTaxa,
+          scale.percent=TRUE,
+          graph.widths=widths,
+          min.width.pc=5, 
+          x.pc.inc=inc,
+          cex.axis=0.5,
+          las.axis=2)
+```
+
+We can also change the widths for non-percent data.  Here we return to the Laguna del Maule data in FAQ 7 and change the width of d15N and d13C columns to twice the standard width.
+
+```{r FAQ11B, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
+widths <- rep(1, ncol(maule.data))
+#sel <- names(maule.data) %in% c("d15N", "d13C")
+#widths[sel] <- 2
+widths[8:9] <- 2
+riojaPlot(maule.data, maule.chron, groups=groups,
+          yvar.name="age_BP", 
+          ymin=-100, 
+          ymax=13300,
+          yinterval=500,
+          plot.bar=FALSE,
+          plot.poly=FALSE,
+          plot.line=selline,
+          plot.symb=selsymb,
+          plot.groups=TRUE,
+          ylabPos=2.2,
+          symb.cex=0.5,
+          ytks1=myticks, 
+          las.axis=2,
+          graph.widths=widths,
+          yBottom=0.06
+          )
+```
+
+### 12. How do I plot surface pollen or diatom data?
 
 `riojaPlot` can plot surface sediment data, you just need to think how to arrange samples on the y-axis.  The example below plots surface sediment diatom data from small ponds and pools in SE England collected by Bennion  (1994) (see ?rioja::Ponds) for details.  Here we arrange the samples along the pH gradient and plot the data against Lake name with TP as a secondary y-axis.  
 
-```{r FAQ11, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
+```{r FAQ12, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
 data(Ponds)
 # reorder the rows in decreasing TP
 o <- order(Ponds$env$TP, decreasing=TRUE)
@@ -714,18 +765,10 @@ colnames(ponds.diat) <- Ponds$names$Name
 mx <- apply(ponds.diat, 2, max)
 ponds.sel <- colnames(ponds.diat)[mx > 10]
 
-# this will plot symbols at zero abundances.  
-# To stop this we write a custom function to plot the symbols
-
-myfun <- function(x, y, i, nm) {
-   x[x > 0.1] <- NA
-   points(x, y, cex=0.4, pch=19)
-}
-
 # With a large number of samples we would use points but with only 30 
 # in this data we use bars.  Although the data are arranged in order of 
 # increasing TP they are not a temporally or spatially contiguous so 
-# lines or silhouetettes are not appropriate.
+# lines or silhouettes are not appropriate.
 
 riojaPlot(ponds.diat, ponds.TP, selVars=ponds.sel,
           yvar.name="LakeName",
@@ -742,17 +785,16 @@ riojaPlot(ponds.diat, ponds.TP, selVars=ponds.sel,
           cex.xlabel=0.6, 
           cex.yaxis=0.6,
           wa.order="topleft", 
-          fun.xfront=myfun,
           names.italicise=TRUE,
           las.axis=2, 
           cex.axis=0.5)
 ```
 
-### 12. How do I plot different levels or samples with a different colour?
+### 13. How do I plot different levels or samples with a different colour?
 
-It is currently only possible to plot different samples with different coloured bars.  Here we extend the example for FAQ 11 above and classify the samples into different groups based on their TP, then plot these different samples with different colours.  We do this by create a character vector of colour names, that corresponds to the samples, then pass this to style `col.sep.bar` and set `sep.bar` to true.  We also create an expression to label the TP axis in the correct units.
+It is currently only possible to plot different samples with different coloured bars.  Here we extend the example for FAQ 12 above and classify the samples into different groups based on their TP, then plot these different samples with different colours.  We do this by create a character vector of colour names, that corresponds to the samples, then pass this to style `col.sep.bar` and set `sep.bar` to true.  We also create an expression to label the TP axis in the correct units.
 
-```{r FAQ12, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
+```{r FAQ13, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
 ponds.TP <- ponds.TP %>%  mutate(bar.cols=case_when(TP < 100 ~ "green",
                             TP >= 100 & TP < 200 ~ "blue",
                             TP >= 200 & TP < 500 ~ "red",
@@ -778,19 +820,18 @@ riojaPlot(ponds.diat, ponds.TP, selVars=ponds.sel,
           cex.xlabel=0.6, 
           cex.yaxis=0.6,
           wa.order="bottomleft", 
-          fun.xfront=myfun,
           names.italicise=TRUE,
           las.axis=2, 
           cex.axis=0.5)
 ```
 
-### 13. How do I plot ecological time series?
+### 14. How do I plot ecological time series?
 
 `riojaPlot` can also be used to plot multi-species ecological time series (or spatial transect) data.  Here we use diatom data from the UK Upland Waters Monitoring Network (https://uwmn.uk/).  The dat at hand are epilithic diatoms samples collected annually from 1988-2018 from Loch Chon (Trossachs, Scotland).  Loch Chon has been previously acidified as a result of acid precipitation, these data were collected to monitor the potential recovery of sites from this previous acidification.  Also with the diatom counts (expressed as relative abundance) a trend test based on a multivariate generalised linear model using the `manyglm` function in package `mvabund` has been conducted to identify taxa that have a significant increasing or decreasing trend.
 
 We first re-order the taxa according to their trend over time and plot the data with silhouettes, coloured to show taxa with significant increasing, decreasing or no trend.
 
-```{r FAQ13A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
+```{r FAQ14A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
 fpath <- system.file("extdata/LochChon.xlsx", package="riojaPlot")
 chon <- readxl::read_excel(fpath, sheet="Diatoms")
 sig_test <- readxl::read_excel(fpath, sheet="Sig_test")
@@ -829,7 +870,7 @@ riojaPlot(chon.ordered, chon.year, groups=chon.groups,
 
 This looks OK but we can "virtually" rotate this figure so it can be viewed as a stacked diagram.  To do this we have to modify the axis labels and orientation of taxon names.  We can't easily do this using riojaPlot styles but we can suppress the plotting of names and x-axis and create a custom function to plot these in any style or position we wish.
 
-```{r FAQ13B, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
+```{r FAQ14B, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
 # create list of blank names to suppress taxon names
 names <- rep("", ncol(chon.ordered))
 myfun <- function(x, y, i, nm) {
@@ -860,11 +901,11 @@ riojaPlot(chon.ordered, chon.year, groups=chon.groups,
           fun.xfront=myfun)
 ```
 
-### 14. How do I add my own zones to a diagram?
+### 15. How do I add my own zones to a diagram?
 
 Arbitrary zones can be added using function `addRPZone`, as either single lines, or as shaded rectangles.  Simply save the riojaPlot object and pass it to `addRPZone`.
 
-```{r FAQ14A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
+```{r FAQ15A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
 mx <- apply(aber.poll, 2, max)
 aber.sel <- names(mx[mx > 2])
 
@@ -909,6 +950,40 @@ rp <- riojaPlot(aber.poll, aber.chron, aber.sel,
    )
 ```
 
+### 16. How do I include special symbols in the variable names
+
+We can pass a character vector of custom names for each column using style `x.names` and use `expression` to create names with superscripts, subscripts or greek letters.  
+
+```{r FAQ16A, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE, eval=FALSE}
+nms <- colnames(maule.data)
+nms[8] <- expression(delta^15*N)
+```
+
+We can also use function `label_geochem` in package  `tidypaleo` to automatically add annotations for a slected range of common geochemical variables.
+
+```{r FAQ16B, fig.width=fWidth, fig.height=fHeight, warning=FALSE, message=FALSE}
+library(tidypaleo)
+nms <- colnames(maule.data)
+nms2 <- as.expression(sapply(nms, function(x) unlist(label_geochem(x)[[1]])))
+riojaPlot(maule.data, maule.chron, groups=groups,
+          yvar.name="age_BP", 
+          x.names=nms2,
+          ymin=-100, 
+          ymax=13300,
+          yinterval=500,
+          plot.bar=FALSE,
+          plot.poly=FALSE,
+          plot.line=selline,
+          plot.symb=selsymb,
+          plot.groups=TRUE,
+          ylabPos=2.2,
+          symb.cex=0.5,
+          ytks1=myticks, 
+          las.axis=2,
+          graph.widths=widths,
+          yBottom=0.06
+          )
+```
 
 
 ## 11. List of modifiable styles and default values
@@ -927,6 +1002,6 @@ ft
 
 Allen, J.R.M. *et al*. (1999) Rapid environmental changes in southern Europe during the last glacial period. Nature, 400, 740-743.
 
-Bennion, H. (1994) A diatom-phosphorus transfer function for shallow, eutrophic ponds in southeast England. \emph{Hydrobiologia}, \bold{275/276}, 391-410.
+Bennion, H. (1994) A diatom-phosphorus transfer function for shallow, eutrophic ponds in southeast England. *Hydrobiologia*, **275/276**, 391-410.
 
 Frugone-Álvarez, M. et al. (2020) Volcanism and climate change as drivers in Holocene depositional dynamic of Laguna del Maule (Andes of central Chile - 36S).  Climate of the Past, DOI 10.5194/cp-2019-147.
