@@ -223,6 +223,7 @@ mystyle <- makeStyles(
    plot.cumul=TRUE,
    exag=TRUE, 
    plot.bar="full",
+   plot.poly=TRUE,
    bar.back=TRUE,
    lwd.bar=0.5,
    col.bar="lightgrey",
@@ -237,7 +238,7 @@ riojaPlot(spec, yvar, selTaxa, types, mystyle,
    ymin=6250,
    ymax=14300,
    yinterval=500, 
-   ytks1=seq(6000, 14000, by=500))
+   ytks1=seq(6000, 14500, by=500))
 }
 
 \keyword{ hplot }
