@@ -6,3 +6,5 @@ README.md
 ^R/MLRC3\.r$
 ^Test/*.*
 ^Test.*
+^doc$
+^Meta$
