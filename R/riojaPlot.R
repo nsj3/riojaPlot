@@ -338,7 +338,7 @@ makeStyles <- function(...) {
         d2 <- scale(d2, TRUE, TRUE)
      }
      diss <- dist(d2)
-     clust <- chclust(diss)
+     clust <- rioja::chclust(diss)
    } 
    if (is.null(clust) & !style$do.clust) {
      style$plot.clust <- FALSE; style$plot.zones <- 0;
@@ -621,7 +621,7 @@ makeStyles <- function(...) {
 
    if (!is.null(clust)) {
      if (style$plot.zones == "auto") {
-        bs <- bstick(clust, plot=FALSE)
+        bs <- rioja::bstick(clust, plot=FALSE)
         bs2 <- bs$dispersion > bs$bstick
         style$plot.zones <- max(which(bs2)) 
         if (style$plot.zones < 2 & verbose) {
@@ -1403,7 +1403,7 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NU
      stop("riojaPlot should be a riojaPlot object")
   }
   if (nZone == "auto") {
-    bs <- bstick(clust, plot=FALSE)
+    bs <- rioja::bstick(clust, plot=FALSE)
     bs2 <- bs$dispersion <= bs$bstick
     nZone <- which(bs2)[1]
     if (nZone < 2 & verbose) {

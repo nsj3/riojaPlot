@@ -6,7 +6,7 @@ Date: 2022-10-28
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
 Depends: R (>= 3.5), rioja
-Imports: vegan, mgcv, grDevices, sjmisc, stringr, dplyr, methods, forcats
+Imports: grDevices, sjmisc, stringr, dplyr, methods, forcats
 Suggests: R.rsp
 Description: Stratigraphic diagrams in R.
 License: GPL-2

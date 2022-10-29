@@ -2,9 +2,7 @@
 ## Imports
 ##
 
-importFrom(rioja, chclust, figCnvt)
-
-importFrom(vegan, bstick, make.cepnames)
+importFrom(rioja, chclust, bstick, figCnvt)
 
 importFrom(sjmisc, word_wrap)
 
@@ -15,10 +13,6 @@ importFrom(dplyr, left_join)
 importFrom(methods, is)
 
 importFrom(forcats, fct_explicit_na)
-
-# importFrom(tidypaleo, label_geochem, label_species)
-
-importFrom(mgcv, gam, s)
 
 importFrom("grDevices", "col2rgb", "rgb", "dev.size")
 
