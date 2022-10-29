@@ -14,4 +14,3 @@ URL: http://www.staff.ncl.ac.uk/stephen.juggins/, https://github.com/nsj3/riojaP
 NeedsCompilation: no
 Repository: CRAN
 VignetteBuilder: knitr, R.rsp
-LazyData: true
