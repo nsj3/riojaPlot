@@ -8,7 +8,7 @@ src/*.dll
 vignettes/Cache/*.*
 R/MLRC3.r
 ^Test/*.*
-^Test.*
+^Test/*
 /doc/
 /Meta/
 ^Test/svgs/*.*
