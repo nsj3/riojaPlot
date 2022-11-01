@@ -1449,7 +1449,7 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
    rownames(y) <- zones[, 2, drop=TRUE]
    
    if (is.null(xLeft))
-     xLeft <- riojaPlot(xRight)
+     xLeft <- riojaPlot$xRight
    riojaPlot(x, y,
             riojaPlot=riojaPlot, 
             col.axis=NA,
