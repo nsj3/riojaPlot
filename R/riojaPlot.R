@@ -1117,7 +1117,7 @@ makeStyles <- function(...) {
        x1 <- x1 + inc2 + xSpace
      } else {
        inc2 <- inc * colM[i]
-       par(fig = rioja::rigCnvt(orig.fig, c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop)))
+       par(fig = rioja::figCnvt(orig.fig, c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop)))
        if (!is.null(minmax)) {
           plot(x_var, y_var, cex = 0.5, axes = FALSE, xaxs = "i", 
                type = "n", yaxs = "i", ylim = ylim, xlim=c(minmax[i, 1], minmax[i,2]), tcl=tcll, ...)
@@ -1230,7 +1230,7 @@ makeStyles <- function(...) {
      figs[[i]] <- par("fig")
    }
    if (!is.null(clust)) {
-      par(fig = rioja::rigCnvt(orig.fig, c(x1, xRight+clust.width, yBottom, yTop)))
+      par(fig = rioja::figCnvt(orig.fig, c(x1, xRight+clust.width, yBottom, yTop)))
       par(mar=c(0,0,0,0))
       par(new = TRUE)
       if (y.rev)
