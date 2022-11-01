@@ -1,12 +1,12 @@
 Package: riojaPlot
 Type: Package
 Title: Stratigraphic Diagrams in R
-Version: 0.1-1
-Date: 2022-10-28
+Version: 0.1-2
+Date: 2022-11-01
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
-Depends: R (>= 3.5), rioja
-Imports: grDevices, sjmisc, stringr, dplyr, methods, forcats
+Depends: R (>= 3.5)
+Imports: grDevices, sjmisc, stringr, dplyr, methods, forcats, rioja
 Suggests: R.rsp
 Description: Stratigraphic diagrams in R.
 License: GPL-2

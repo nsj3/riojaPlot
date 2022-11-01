@@ -950,7 +950,7 @@ makeStyles <- function(...) {
      mgpX <- if (is.null(mgp)) { c(3, max(0.0, 0.3 + 0.1 - tcll), 0.3) } else { mgp }
 
      if (doSecYvar) {
-       par(fig = figCnvt(orig.fig, c(yAxis2Pos, yAxis2Pos+0.2, yBottom, yTop)), new=add)
+       par(fig = rioja::figCnvt(orig.fig, c(yAxis2Pos, yAxis2Pos+0.2, yBottom, yTop)), new=add)
        plot(0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", yaxs = "i", ylim = ylim, tcl=tcll, ...)
        axis(side=2, las=las.yaxis, at=ylab2$y, labels = as.character(format(ylab2$x)), cex.axis=cex.yaxis, xpd=TRUE, 
             tcl=tcll, mgp=mgpX) # c(3, 0.6, 0))
@@ -958,7 +958,7 @@ makeStyles <- function(...) {
        add <- TRUE
      }
 
-     par(fig = figCnvt(orig.fig, c(x1, x1+0.2, yBottom, yTop)), new=add)
+     par(fig = rioja::figCnvt(orig.fig, c(x1, x1+0.2, yBottom, yTop)), new=add)
      plot(NA, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", yaxs = "i", ylim = ylim, tcl=tcll, ...)
      if (mode(y.tks)=="list") {
        y.tks <- y.tks[[1]]
@@ -1024,7 +1024,7 @@ makeStyles <- function(...) {
      par(lend = "butt")
      if (scale.percent) {
         inc2 <- inc * colM[i]
-        par(fig = figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
+        par(fig = rioja::figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
         xxlim <- c(0, ifelse(cumulPlot, colM[i]/cumul.mult, colM[i]/graph.widths[i]))
         plot(0, 0, cex = 0.5, xlim = xxlim, 
              axes = FALSE, xaxs = "i", type = "n", yaxs = "i", ylim = ylim, xlab="", ylab="", ...)
@@ -1117,7 +1117,7 @@ makeStyles <- function(...) {
        x1 <- x1 + inc2 + xSpace
      } else {
        inc2 <- inc * colM[i]
-       par(fig = figCnvt(orig.fig, c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop)))
+       par(fig = rioja::rigCnvt(orig.fig, c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop)))
        if (!is.null(minmax)) {
           plot(x_var, y_var, cex = 0.5, axes = FALSE, xaxs = "i", 
                type = "n", yaxs = "i", ylim = ylim, xlim=c(minmax[i, 1], minmax[i,2]), tcl=tcll, ...)
@@ -1230,7 +1230,7 @@ makeStyles <- function(...) {
      figs[[i]] <- par("fig")
    }
    if (!is.null(clust)) {
-      par(fig = figCnvt(orig.fig, c(x1, xRight+clust.width, yBottom, yTop)))
+      par(fig = rioja::rigCnvt(orig.fig, c(x1, xRight+clust.width, yBottom, yTop)))
       par(mar=c(0,0,0,0))
       par(new = TRUE)
       if (y.rev)
@@ -1362,7 +1362,7 @@ addRPZone <- function(riojaPlot, upper, lower=NULL, xLeft=NULL, xRight=NULL, col
       apply(col2rgb(x)/255, 2, function(x) rgb(x[1], x[2], x[3], alpha))
   }
   fillcol <- make.col(col, alpha)
-  par(fig=figCnvt(riojaPlot$orig.fig, riojaPlot$box))
+  par(fig=rioja::figCnvt(riojaPlot$orig.fig, riojaPlot$box))
   par(mar=c(0,0,0,0))
   par(usr=c(0, 1, riojaPlot$usr[3], riojaPlot$usr[4]))
   if (is.null(lower))
