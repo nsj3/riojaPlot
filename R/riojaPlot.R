@@ -445,6 +445,8 @@ makeStyles <- function(...) {
       } else if (!is.na(style$ymax) & !is.na(style$ymin)) {
          ylim[1] <- style$ymin
          ylim[2] <- style$ymax
+         if (ylim[1] >= ylim[2])
+           stop("ymin > ymax")
       }
 
       if (is.null(style$ytks1)) {
@@ -1265,9 +1267,9 @@ addName <- function(x, xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=0)
     rD <- abs((usr2[4] - usr2[3]))
     rF <- fig[2]
     r <- rD/rF * xLabSpace
-    yPos <- usr2[4] + r 
+    yPos <- max(usr2[3:4]) + r 
     if (y.rev)
-      yPos <- usr2[4]-r 
+      yPos <- min(usr2[3:4]) - r 
     rD <- abs((usr2[1] - usr2[2]))
     rf <- fig[1]
     r <- rD/rF * .4 # offset
