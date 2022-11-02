@@ -79,8 +79,6 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
       style$plot.top.axis <- riojaPlot$style$plot.top.axis
    }
    
-   print(style$start.new.plot)
-   
    validStyles <- names(makeStyles())
    for (i in argNames) {
       if (!(i %in% validStyles)) 
@@ -287,7 +285,6 @@ makeStyles <- function(...) {
       style$plot.bar <- style$plot.bar[mydata$selVars[!tmp]]
       style$plot.symb <- style$plot.symb[mydata$selVars[!tmp]]
       style$graph.widths <- style$graph.widths[mydata$selVars[!tmp]]
-#      print(style$graph.widths)
 #      style$min.width.pc <- style$min.width.pc[mydata$selVars[!tmp]]
       style$x.pc.inc <- style$x.pc.inc[mydata$selVars[!tmp]]
    } else {
@@ -611,8 +608,6 @@ makeStyles <- function(...) {
      style$col.symb <- c(style$col.symb, "black")
    }
 
-   print(style$start.new.plot)
-   
    x <- .riojaPlot2(d, yvar = yvar, y.rev=style$y.rev, scale.percent=style$scale.percent, 
                 plot.bar=style$plot.bar, plot.line=style$plot.line, plot.poly=style$plot.poly, 
                 plot.symb=style$plot.symb, yTop=style$yTop, 
@@ -915,7 +910,6 @@ makeStyles <- function(...) {
          if (is.null(ylabPos)) {
 #            ylabPos <-  (mx1 / line2fig) - tcll
             ylabPos <-  (mx1 / line2fig) - tcll
-            print(ylabPos)
          }
          xLeft <- xLeft + (line2fig + line2fig * cex.ylabel) 
       }
@@ -980,9 +974,6 @@ makeStyles <- function(...) {
    }
    usr1 <- c(0, 1, ylim)
 
-   print(add)
-   
-   
    if (y.axis) {
 #     mgpY <- if (is.null(mgp)) { c(3, max(0.0, 0.3 + 0.1 - tcll), 0.3) } else { mgp }
      mgpY <- if (is.null(mgp)) { c(3, max(0.0, 0.1 - tcll), 0) } else { mgp }
@@ -1022,8 +1013,6 @@ makeStyles <- function(...) {
            mx1 <- max(sapply(ylabs, function(x) strwidth(x, units='user', 
                              cex=cex.yaxis))) # width of axis labels
            mx1 <- mx1 - tcll / 2
-           print(mx1)
-          
            text(-mx1, mean(ylim), yNames[1], xpd=NA, srt=90, adj=c(0.5, 0), cex=cex.ylabel)
 #           mtext(yNames[1], side=2, line=ylabPos, cex=cex.ylabel)
         } else {
@@ -1316,7 +1305,6 @@ makeStyles <- function(...) {
               usr = usr1, mgpX=mgpX, mgpX3=mgpX3, xRight=xRight2, orig.fig=orig.fig,
               yvar=yvar[, 1, drop=TRUE], ylim=ylim, y.rev=y.rev, figs=figs, usrs=usrs)
    class(ll) <- "riojaPlot"
-   print("Here")
    invisible(ll)
 }
 
