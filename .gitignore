@@ -1,7 +1,6 @@
 .Rproj.user/
 .Rhistory
 .RData
-vignettes/Cache/*.*
-Test/*.*
+vignettes/Cache/
 Test/
 Test*.*
