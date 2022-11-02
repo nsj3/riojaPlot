@@ -13,7 +13,7 @@ Plots a diagram of multiple biological, physical or chemical parameters agains d
 }
 \usage{
 riojaPlot(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
-          riojaPlot=NULL, verbose=TRUE, \dots)
+          lithology=NULL, riojaPlot=NULL, verbose=TRUE, \dots)
 
 addRPClust(riojaPlot, clust, xLeft=NULL, xRight=0.99, verbose=TRUE, \dots)
 
@@ -71,7 +71,7 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{bar.back}}{, plot horizontal bars on top or below shaded silhouettes (default TRUE). }
   \item{\code{cex.axis, cex.yaxis, cex.ylabel, cex.xlabel, cex.cumul}}, { font sizes (size relative to default of 1). }
   \item{\code{tcl}}{ tick length for axes, in logical units (default -0.3). }
-  \item{\code{srt.xlabel}}{ angle (in degrees) of names (default=90). }
+  \item{\code{srt.xlabel, srt.ylabel}}{ angle (in degrees) of names (default=90). }
   \item{\code{do.clust}}{ do a CONISS constrained clustering. }
   \item{\code{clust.data.trans}}{ transform data before cluster analysis ("none", "sqrt", or "scale", default "none"). }
   \item{\code{clust.use.selected}}{ use selected variables (ie. those listed in selVars) or all variables when calculating cluster dendrogram (default FALSE). }
@@ -143,6 +143,7 @@ Steve Juggins
 # use built-in data from Abernethy Forest
 # see ?aber for citation
 
+library(rioja)
 data(aber)
 
 # extract pollen percentages

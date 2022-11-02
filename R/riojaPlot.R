@@ -121,7 +121,10 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
    if (length(style$graph.widths)==1)
        style$graph.widths <- rep(style$graph.widths, ncol)
    if (length(style$x.pc.inc)==1)
-       style$x.pc.inc <- rep(style$x.pc.inc, ncol)
+     style$x.pc.inc <- rep(style$x.pc.inc, ncol)
+
+   if (is.na(style$srt.ylabel))
+     style$srt.ylabel <- style$srt.xlabel
 
    .riojaPlot1(plotdata, style, riojaPlot=riojaPlot, verbose=verbose)  
 } 
@@ -232,6 +235,7 @@ makeStyles <- function(...) {
    style$x.pc.inc <- 10
    style$fun.lithology <- NA
    style$lithology.width <- 0.03
+   style$srt.ylabel <- NA
 
 #   style$orig.fig <- c(0, 1, 0, 1)
    args <- list(...)
@@ -633,7 +637,7 @@ makeStyles <- function(...) {
                 fun.plotback=style$fun.plotback, fun.yaxis=style$fun.yaxis, 
                 graph.widths=style$graph.widths, x.pc.inc=style$x.pc.inc, 
                 lithology=mydata$lithology, fun.lithology=style$fun.lithology, 
-                lithology.width=style$lithology.width)
+                lithology.width=style$lithology.width, srt.ylabel=style$srt.ylabel)
 
    if (!is.null(clust)) {
      if (style$plot.zones == "auto") {
@@ -668,7 +672,7 @@ makeStyles <- function(...) {
                   cumul.mult = 1.0, col.exag.line=NA, lwd.exag.line=0.6, lwd.axis=1, 
                   col.axis="black", omitMissing=TRUE, plot.top.axis=FALSE, plot.bottom.axis=TRUE, 
                   xlabPos=0.1, las.yaxis=1, fun.plotback=NULL, fun.yaxis=NULL, 
-                  lithology=NULL, fun.lithology=NULL, lithology.width=0.5, ...)
+                  lithology=NULL, fun.lithology=NULL, lithology.width=0.5, srt.ylabel=90, ...)
 {
 
    d <- as.data.frame(d)
@@ -983,7 +987,7 @@ makeStyles <- function(...) {
             yaxs = "i", ylim = ylim, tcl=tcll, ...)
        axis(side=2, las=las.yaxis, at=ylab2$y, labels = as.character(format(ylab2$x)), 
             cex.axis=cex.yaxis, xpd=TRUE, tcl=tcll, mgp=mgpY) # c(3, 0.6, 0))
-       addName(yNames[2], xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=-2)     
+       addName(yNames[2], xLabSpace, srt.ylabel, cex.xlabel, y.rev, offset=-2)     
        add <- TRUE
      }
 
@@ -1016,7 +1020,7 @@ makeStyles <- function(...) {
            text(-mx1, mean(ylim), yNames[1], xpd=NA, srt=90, adj=c(0.5, 0), cex=cex.ylabel)
 #           mtext(yNames[1], side=2, line=ylabPos, cex=cex.ylabel)
         } else {
-           addName(yNames[1], xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=-2)     
+           addName(yNames[1], xLabSpace, srt.ylabel, cex.xlabel, y.rev, offset=-2)     
         }
      }
    }
