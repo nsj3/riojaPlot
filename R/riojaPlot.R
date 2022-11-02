@@ -18,6 +18,14 @@ utils::globalVariables(c("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd
 
 riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
                       lithology=NULL, riojaPlot=NULL, verbose=TRUE, ...) {
+   on.exit({
+     warn <- options()$warn
+     options(warn=-1)
+      rm("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
+         "groupColours", "groupCex", "groupNames", "lwd.axis", 
+         "col.axis", "cumulSpace", envir=.GlobalEnv)
+     options(warn=warn)
+   })
     
    if (!is.null(riojaPlot)) {
      if (!is(riojaPlot, "riojaPlot")) {
@@ -71,6 +79,8 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
       style$plot.top.axis <- riojaPlot$style$plot.top.axis
    }
    
+   print(style$start.new.plot)
+   
    validStyles <- names(makeStyles())
    for (i in argNames) {
       if (!(i %in% validStyles)) 
@@ -116,14 +126,6 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
        style$x.pc.inc <- rep(style$x.pc.inc, ncol)
 
    .riojaPlot1(plotdata, style, riojaPlot=riojaPlot, verbose=verbose)  
-   on.exit({
-     warn <- options()$warn
-     options(warn=-1)
-      rm("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
-         "groupColours", "groupCex", "groupNames", "lwd.axis", 
-         "col.axis", "cumulSpace", envir=.GlobalEnv)
-     options(warn=warn)
-   })
 } 
 
 listStyles <- function() {
@@ -609,6 +611,8 @@ makeStyles <- function(...) {
      style$col.symb <- c(style$col.symb, "black")
    }
 
+   print(style$start.new.plot)
+   
    x <- .riojaPlot2(d, yvar = yvar, y.rev=style$y.rev, scale.percent=style$scale.percent, 
                 plot.bar=style$plot.bar, plot.line=style$plot.line, plot.poly=style$plot.poly, 
                 plot.symb=style$plot.symb, yTop=style$yTop, 
@@ -633,7 +637,8 @@ makeStyles <- function(...) {
                 y.axis=style$plot.yaxis, xLeft=style$xLeft, add=!style$start.new.plot, 
                 fun.plotback=style$fun.plotback, fun.yaxis=style$fun.yaxis, 
                 graph.widths=style$graph.widths, x.pc.inc=style$x.pc.inc, 
-                lithology=mydata$lithology, fun.lithology=style$fun.lithology, lithology.width=style$lithology.width)
+                lithology=mydata$lithology, fun.lithology=style$fun.lithology, 
+                lithology.width=style$lithology.width)
 
    if (!is.null(clust)) {
      if (style$plot.zones == "auto") {
@@ -975,6 +980,9 @@ makeStyles <- function(...) {
    }
    usr1 <- c(0, 1, ylim)
 
+   print(add)
+   
+   
    if (y.axis) {
 #     mgpY <- if (is.null(mgp)) { c(3, max(0.0, 0.3 + 0.1 - tcll), 0.3) } else { mgp }
      mgpY <- if (is.null(mgp)) { c(3, max(0.0, 0.1 - tcll), 0) } else { mgp }
@@ -1290,7 +1298,8 @@ makeStyles <- function(...) {
          xl <- rev(ylim)
       else
          xl <- ylim
-     plot(clust, xvar=yvar[, 1, drop=TRUE], horiz=TRUE, x.rev=y.rev, labels=rep("", length(yvar[, 1, drop=TRUE])), 
+     plot(clust, xvar=yvar[, 1, drop=TRUE], horiz=TRUE, x.rev=y.rev, 
+          labels=rep("", length(yvar[, 1, drop=TRUE])), 
           hang=-1, mgp=mgpX, cex.axis=cex.axis, xlim=xl, yaxs="i", xpd=FALSE, tcl=tcll, ...)
      if (plot.top.axis) {
        axis(side=3, mgp=mgpX3, cex.axis=cex.axis, tcl=tcll)
@@ -1307,6 +1316,7 @@ makeStyles <- function(...) {
               usr = usr1, mgpX=mgpX, mgpX3=mgpX3, xRight=xRight2, orig.fig=orig.fig,
               yvar=yvar[, 1, drop=TRUE], ylim=ylim, y.rev=y.rev, figs=figs, usrs=usrs)
    class(ll) <- "riojaPlot"
+   print("Here")
    invisible(ll)
 }
 
