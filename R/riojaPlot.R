@@ -16,7 +16,8 @@ utils::globalVariables(c("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd
 #      exag.alpha=rp$style$exag.alpha, col.axis=rp$style$col.axis, plot.top.axis=rp$style$plot.top.axis, ...)
 #}
 
-riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, riojaPlot=NULL, verbose=TRUE, ...) {
+riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
+                      lithology=NULL, riojaPlot=NULL, verbose=TRUE, ...) {
     
    if (!is.null(riojaPlot)) {
      if (!is(riojaPlot, "riojaPlot")) {
@@ -27,19 +28,23 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, r
      }
      style <- NULL
    }
+   args <- list(...)
+   argNames <- names(args)
+
    if (!is(x, "data.frame"))
      stop("x should be a data frame or tibble")
    if (!is(y, "data.frame"))
      stop("y should be a data frame or tibble")
-  
+   if (!is.null(lithology) & !is(lithology, "data.frame"))
+     stop("lithology should be a data frame or tibble")
+
    plotdata <- list()
    plotdata$spec <- x
    plotdata$chron <- y
    plotdata$selVars <- selVars
    plotdata$groups <- groups
    plotdata$clust <- clust
-   args <- list(...)
-   argNames <- names(args)
+   plotdata$lithology <- lithology
    
    if (!is.null(style)) {
       if (!methods::is(style, "riojaPlot.style"))
@@ -202,7 +207,7 @@ makeStyles <- function(...) {
    style$fun.yaxis <- NA
    style$ylabPos <- NA
    style$xlabPos <- 0.1
-   style$xSpace <- 0.01
+   style$xSpace <- 0.005
    style$x.pc.omit0 <- TRUE
    style$lwd.axis <- 1
    style$col.axis <- "grey"
@@ -221,7 +226,9 @@ makeStyles <- function(...) {
    style$start.new.plot <- TRUE
    style$xGap <- 0.01
    style$x.pc.inc <- 10
-   
+   style$fun.lithology <- NA
+   style$lithology.width <- 0.03
+
 #   style$orig.fig <- c(0, 1, 0, 1)
    args <- list(...)
    argNames <- names(args)
@@ -241,7 +248,7 @@ makeStyles <- function(...) {
    orig.fig <- par("fig")
 
    if (is.null(mydata$spec) | is.null(mydata$chron) )
-      stop("You must specify a table of data to plot (x) and a dataframe with at least one variable for the y-axis scale (y) data");
+      stop("You must specify a table of data to plot (x) and a data frame with at least one variable for the y-axis scale (y) data");
   
    if (is.null(style$x.names[[1]])) {
       style$x.names <- colnames(mydata$spec)
@@ -311,6 +318,8 @@ makeStyles <- function(...) {
      yvar <- mydata$chron[, 1, drop=FALSE]
      yvarName <- colnames(mydata$chron)[1]
    }
+   if (is(style$fun.lithology, "logical"))
+     style$fun.lithology <- NULL
    if (is(style$fun.xback, "logical"))
      style$fun.xback <- NULL
    if (is(style$fun.xfront, "logical"))
@@ -619,7 +628,8 @@ makeStyles <- function(...) {
                 xlabPos=style$xlabPos, las.yaxis=style$las.yaxis,
                 y.axis=style$plot.yaxis, xLeft=style$xLeft, add=!style$start.new.plot, 
                 fun.plotback=style$fun.plotback, fun.yaxis=style$fun.yaxis, 
-                graph.widths=style$graph.widths, x.pc.inc=style$x.pc.inc)
+                graph.widths=style$graph.widths, x.pc.inc=style$x.pc.inc, 
+                lithology=mydata$lithology, fun.lithology=style$fun.lithology, lithology.width=style$lithology.width)
 
    if (!is.null(clust)) {
      if (style$plot.zones == "auto") {
@@ -653,7 +663,8 @@ makeStyles <- function(...) {
                   col.bg=NULL, fun1=NULL, fun2=NULL, add=FALSE,  
                   cumul.mult = 1.0, col.exag.line=NA, lwd.exag.line=0.6, lwd.axis=1, 
                   col.axis="black", omitMissing=TRUE, plot.top.axis=FALSE, plot.bottom.axis=TRUE, 
-                  xlabPos=0.1, las.yaxis=1, fun.plotback=NULL, fun.yaxis=NULL, ...)
+                  xlabPos=0.1, las.yaxis=1, fun.plotback=NULL, fun.yaxis=NULL, 
+                  lithology=NULL, fun.lithology=NULL, lithology.width=0.5, ...)
 {
 
    d <- as.data.frame(d)
@@ -874,13 +885,16 @@ makeStyles <- function(...) {
 #        ylabs <- as.character(yvar[, 1])
         ylabs <- pretty(yvar[, 1], n=10)
       incX <- strheight("M", units="figure", cex=cex.ylabel) / plotRatio # distance to axis values
-      mx1 <- max(sapply(ylabs, function(x) strwidth(x, units='figure', cex=cex.yaxis))) # width of axis labels
-      xLeft <- incX + mx1 + 0.02 / plotRatio
+      mx1 <- max(sapply(ylabs, function(x) strwidth(x, units='figure', 
+                                                    cex=cex.yaxis))) # width of axis labels
+#      xLeft <- incX + mx1 + 0.02 / plotRatio
+      xLeft <- incX + 0.02 / plotRatio
 
 # without label
       incX <- strwidth("0", units='figure', cex=1)
       if (doSecYvar)
-         xLeft <- mx1 + incX * 4
+#         xLeft <- mx1 + incX * 4
+         xLeft <- mx1 + incX * 3
       else 
          xLeft <- mx1 + incX * 3
       
@@ -934,34 +948,45 @@ makeStyles <- function(...) {
       yBottom <- 0.05
    }
 
-   xLen <- xRight - xLeft
+   if(!is.null(lithology)) {
+     x1 <- xLeft + lithology.width + xSpace * 2
+     xLen <- xRight - xLeft - lithology.width - xSpace * 2
+   } else {
+     xLen <- xRight - xLeft - xSpace
+     x1 <- xLeft + xSpace 
+   }
    xInc <- xLen - ((nsp + 1) * xSpace)
    inc <- xInc/colM.sum
    if (inc < 0.0)
      stop("Too many variables, curves will be too small.")
-   x1 <- xLeft
+   
+   
     #    par(fig = c(x1, x1+0.4, yStart, yTop))
    if (y.rev) {
-     tmp <- ylim[1]
-     ylim[1] <- ylim[2]
-     ylim[2] <- tmp
+     ylim <- rev(ylim)
+#     tmp <- ylim[1]
+#     ylim[1] <- ylim[2]
+#     ylim[2] <- tmp
    }
    usr1 <- c(0, 1, ylim)
 
    if (y.axis) {
-     mgpX <- if (is.null(mgp)) { c(3, max(0.0, 0.3 + 0.1 - tcll), 0.3) } else { mgp }
-
+#     mgpY <- if (is.null(mgp)) { c(3, max(0.0, 0.3 + 0.1 - tcll), 0.3) } else { mgp }
+     mgpY <- if (is.null(mgp)) { c(3, max(0.0, 0.1 - tcll), 0) } else { mgp }
      if (doSecYvar) {
        par(fig = rioja::figCnvt(orig.fig, c(yAxis2Pos, yAxis2Pos+0.2, yBottom, yTop)), new=add)
-       plot(0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", yaxs = "i", ylim = ylim, tcl=tcll, ...)
-       axis(side=2, las=las.yaxis, at=ylab2$y, labels = as.character(format(ylab2$x)), cex.axis=cex.yaxis, xpd=TRUE, 
-            tcl=tcll, mgp=mgpX) # c(3, 0.6, 0))
+       plot(0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", 
+            yaxs = "i", ylim = ylim, tcl=tcll, ...)
+       axis(side=2, las=las.yaxis, at=ylab2$y, labels = as.character(format(ylab2$x)), 
+            cex.axis=cex.yaxis, xpd=TRUE, tcl=tcll, mgp=mgpY) # c(3, 0.6, 0))
        addName(yNames[2], xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=-2)     
        add <- TRUE
      }
 
-     par(fig = rioja::figCnvt(orig.fig, c(x1, x1+0.2, yBottom, yTop)), new=add)
-     plot(NA, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", yaxs = "i", ylim = ylim, tcl=tcll, ...)
+     par(fig = rioja::figCnvt(orig.fig, c(xLeft, xLeft+0.2, yBottom, yTop)), new=add)
+#     par(fig = rioja::figCnvt(orig.fig, c(x1, x1+0.2, yBottom, yTop)), new=add)
+     plot(NA, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", 
+          yaxs = "i", ylim = ylim, tcl=tcll, ...)
      if (mode(y.tks)=="list") {
        y.tks <- y.tks[[1]]
      }     
@@ -973,9 +998,9 @@ makeStyles <- function(...) {
        y.tks.labels <- y.tks.labels
      y.tks.labels = as.character(y.tks.labels)
      
-     ax <- axis(side=2, las=las.yaxis, at=y.tks, labels=y.tks.labels, cex.axis=cex.yaxis, xpd=TRUE, 
-                tcl=tcll, mgp=mgpX) # c(3, 0.6, 0))
-     x1 <- x1 + xSpace
+     ax <- axis(side=2, las=las.yaxis, at=y.tks, labels=y.tks.labels, 
+                cex.axis=cex.yaxis, xpd=TRUE, tcl=tcll, mgp=mgpY) # c(3, 0.6, 0))
+#     x1 <- x1 + xSpace 
 #     mtext(title, adj = 0, line = 5, cex = cex.title)
 #     if (nchar(stringr::str_trim(yNames[1])) > 0) {
      
@@ -991,6 +1016,9 @@ makeStyles <- function(...) {
    figs <- vector("list", length=nsp)
    usrs <- vector("list", length=nsp)
 
+   mgpX <- if (is.null(mgp)) { c(3,max(0.0, spc-tcll), 0.3 ) } else { mgp }
+   mgpX3 <- if (is.null(mgp)) { c(3, max(0, 0.2-tcll), 0.3 ) } else { mgp }
+
    if(!is.null(fun.plotback)) {
       fbox=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop)     
       myfig <- par("fig")
@@ -998,7 +1026,20 @@ makeStyles <- function(...) {
       fun.plotback(usr1, fbox)
       par(fig=myfig)
    }
-      
+
+   if (!is.null(lithology)) {
+     myfig <- par("fig")
+     par(fig = rioja::figCnvt(orig.fig, c(xLeft+xSpace, xLeft+lithology.width+xSpace, 
+                                          yBottom, yTop)), new=TRUE)
+     plot(0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", 
+          xaxs="i", yaxs = "i", ylim = ylim, tcl=tcll, ...)
+#     rect(0, ylim[1], 1, ylim[2], col="red")
+     if (!is.null(fun.lithology))
+        fun.lithology(lithology)
+     par(fig=myfig)
+#     xLeft <- xLeft + lithology.width + xSpace
+   }
+   
    for (i in 1:nsp) {
      ty <- ifelse(plot.line[i], "l", "n")
 
@@ -1102,8 +1143,6 @@ makeStyles <- function(...) {
              xlabbt <- as.character(xlabb)
              if (x.pc.omit0)
                 xlabbt[1] <- ""
-             mgpX <- if (is.null(mgp)) { c(3,max(0.0, spc-tcll), 0.3 ) } else { mgp }
-             mgpX3 <- if (is.null(mgp)) { c(3, max(0, 0.2-tcll), 0.3 ) } else { mgp }
              if (plot.bottom.axis) 
                 axis(side=1, at=xlabb, labels=xlabbt, mgp=mgpX, cex.axis=cex.axis, tcl=tcll, ...)
              if (plot.top.axis) {
@@ -1231,6 +1270,7 @@ makeStyles <- function(...) {
      usrs[[i]] <- usr2   
      figs[[i]] <- par("fig")
    }
+     
    if (!is.null(clust)) {
       par(fig = rioja::figCnvt(orig.fig, c(x1, xRight+clust.width, yBottom, yTop)))
       par(mar=c(0,0,0,0))
