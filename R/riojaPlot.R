@@ -116,10 +116,14 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
        style$x.pc.inc <- rep(style$x.pc.inc, ncol)
 
    .riojaPlot1(plotdata, style, riojaPlot=riojaPlot, verbose=verbose)  
-#   on.exit({
-#     rm("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
-#                         "groupColours", "groupCex", "groupNames", lwd.axis, envir=.GlobalEnv)
-#   })
+   on.exit({
+     warn <- options()$warn
+     options(warn=-1)
+      rm("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
+         "groupColours", "groupCex", "groupNames", "lwd.axis", 
+         "col.axis", "cumulSpace", envir=.GlobalEnv)
+     options(warn=warn)
+   })
 } 
 
 listStyles <- function() {
@@ -887,8 +891,6 @@ makeStyles <- function(...) {
       incX <- strheight("M", units="figure", cex=cex.ylabel) / plotRatio # distance to axis values
       mx1 <- max(sapply(ylabs, function(x) strwidth(x, units='figure', 
                                                     cex=cex.yaxis))) # width of axis labels
-#      xLeft <- incX + mx1 + 0.02 / plotRatio
-      xLeft <- incX + 0.02 / plotRatio
 
 # without label
       incX <- strwidth("0", units='figure', cex=1)
@@ -896,15 +898,19 @@ makeStyles <- function(...) {
 #         xLeft <- mx1 + incX * 4
          xLeft <- mx1 + incX * 3
       else 
-         xLeft <- mx1 + incX * 3
+         xLeft <- mx1 # + incX * 3
       
 # now label
 #      if (nchar(stringr::str_trim(yNames[1])) > 0 & !doSecYvar) {
       if (nchar(yNames[1]) > 0 & !doSecYvar) {
-         line2fig <- strheight(yNames[1], units='figure', cex=1) / plotRatio
+         
+#         line2fig <- strheight(yNames[1], units='figure', cex=1) / plotRatio
+         line2fig <- strheight(yNames[1], units='figure', cex=1) # / plotRatio
+       
          if (is.null(ylabPos)) {
-#            ylabPos <- 1 + mx1 / line2fig
+#            ylabPos <-  (mx1 / line2fig) - tcll
             ylabPos <-  (mx1 / line2fig) - tcll
+            print(ylabPos)
          }
          xLeft <- xLeft + (line2fig + line2fig * cex.ylabel) 
       }
@@ -959,8 +965,7 @@ makeStyles <- function(...) {
    inc <- xInc/colM.sum
    if (inc < 0.0)
      stop("Too many variables, curves will be too small.")
-   
-   
+
     #    par(fig = c(x1, x1+0.4, yStart, yTop))
    if (y.rev) {
      ylim <- rev(ylim)
@@ -1006,7 +1011,13 @@ makeStyles <- function(...) {
      
      if (nchar(yNames[1]) > 0) {
         if (!doSecYvar) {
-           mtext(yNames[1], side=2, line=ylabPos, cex=cex.ylabel)
+           mx1 <- max(sapply(ylabs, function(x) strwidth(x, units='user', 
+                             cex=cex.yaxis))) # width of axis labels
+           mx1 <- mx1 - tcll / 2
+           print(mx1)
+          
+           text(-mx1, mean(ylim), yNames[1], xpd=NA, srt=90, adj=c(0.5, 0), cex=cex.ylabel)
+#           mtext(yNames[1], side=2, line=ylabPos, cex=cex.ylabel)
         } else {
            addName(yNames[1], xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=-2)     
         }
