@@ -1,7 +1,7 @@
 Package: riojaPlot
 Type: Package
 Title: Stratigraphic Diagrams in R
-Version: 0.1-5
+Version: 0.1-6
 Date: 2022-11-02
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
