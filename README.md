@@ -21,4 +21,5 @@ library(riojaPlot)
 vignette("riojaPlot")
 # or vignette("riojaPlotPDF") for a pdf version
 ```
-
+Please send comments, bug reports and suggestions for improvements and additions to 
+[Stephen.Juggins@ncl.ac.uk](mailto:Stephen.Juggins@ncl.ac.uk).
