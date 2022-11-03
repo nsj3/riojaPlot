@@ -130,8 +130,7 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
 } 
 
 listStyles <- function() {
-#  styles <- unlist(makeStyles())
-  styles <- unlist(sapply(st, function(x) { x[1] } ))
+  styles <- unlist(sapply(styles, function(x) { x[1] } ))
   x <- data.frame(Style=names(styles), Value=styles)
   rownames(x) <- NULL
   x
