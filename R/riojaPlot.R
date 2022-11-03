@@ -938,7 +938,8 @@ makeStyles <- function(...) {
       xLeft <- xLeft + yAxis2Pos
    }
 
-   if (is.null(clust) & is.null(xRight)) {
+#   if (is.null(clust) & is.null(xRight)) {
+   if (is.null(clust) & xRight > 0.95) {
         xRight <- 1.0
 #        xRight <- 0.99
         xLen <- xRight - xLeft
@@ -948,9 +949,10 @@ makeStyles <- function(...) {
         wid <- strwidth(x.names[length(x.names)], units='figure', 
                                cex=cex.xlabel) * 0.9 * sin(pi/180 * (90-srt.xlabel))
         if (srt.xlabel > 0)
-           wid <- wid + strwidth("m", units='figure', cex=cex.xlabel)
+           wid <- wid + strwidth("m", units='figure', cex=cex.xlabel) 
+
         if (wid > inc) {
-          xRight <- 1 - (wid-inc)
+           xRight <- 1 - (wid-inc)
         }
    } 
    if (is.null(yBottom)) {

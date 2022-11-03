@@ -45,6 +45,7 @@ makeStyles(...)
   \item{col, alpha, border}{ colour, alpha value (transparency) and border colour of zones. }
   \item{zones}{ a data frame with 2 columns, the first giving the y-value to draw the zone label and the second the zones names as character. }
   \item{showColumn}{ draw a column around the zone names? }
+  \item{lithology}{ data frame or tibble that is passed to fun.lithology for plotting the lithological column. }
   \item{...}{ additional arguments to control the style of the figure (see details below) or colour of zones. }
 }
 
@@ -98,14 +99,14 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{graph.widths}}{ vector of relative widths for each graph (default 1). }
   \item{\code{xSpace}}{ space between individual graphs (fraction of page width, default=0.01). }
   \item{\code{xGap}}{ space between datasets plotted by repeated calls to riojaPlot (fraction of page width, default=0.01). }
-  
   \item{\code{ylabSpace}}{ x-position of y-axis label when secondary y-axis is not used, in lines (use to tweak position of y-axis label, try values of 2-3). }
   \item{\code{sep.bar}}{ plot different colours for bars for different levels?  Default FALSE. }
   \item{\code{col.sep.bar}}{ character vector with colours for bars for each sample. }
   \item{\code{plot.top.axis, plot.bottom.axis}}{ show x-axes on top and/or bottom of plots (default FALSE, TRUE respectively. }
   \item{\code{omitMissing}}{ Strip NAs from data before plotting (default TRUE).  Setting to FALSE will leave gaps in lines with NA. }
   \item{\code{cumulSpace}}{ gap to leave between top axis and cumulative plot legend.  Default NA for riojaPlot to guess. }
-  
+  \item{\code{fun.lithology}}{ function that passes a single dat frame or tibble of information for plotting the lithology column. }
+  \item{\code{lithology.width}}{ width of lithology column, as fraction of page width. }
 }
 
 \code{fun.xback} and \code{fun.xfront} are user-defined functions of the form `myfun(x, y, i, nm)` that pass four arguments: x and y values, the index of the plot (i, from 1 to nplots, left to right) and the variable name (nm) to be plotted, as a named character vector.  
