@@ -7,18 +7,26 @@ Stratigraphic diagrams in R.
 
 Install with:
 
-`install.packages("riojaPlot", repos="https://nsj3.r-universe.dev")```
-
+```
+{
+install.packages("riojaPlot", repos="https://nsj3.r-universe.dev")
+}
+```
 or
 
-```remotes::install_github("nsj3/riojaPlot", build_vignettes=TRUE, dependencies=TRUE)```
+```
+{
+remotes::install_github("nsj3/riojaPlot", build_vignettes=TRUE, dependencies=TRUE)
+}
+```
 
 Then:
 
-
-```library(riojaPlot)
-```vignette("riojaPlot")
-
-```# or vignette("riojaPlotPDF") for a pdf version
-
+```
+{
+library(riojaPlot)
+vignette("riojaPlot")
+# or vignette("riojaPlotPDF") for a pdf version
+}
+```
 
