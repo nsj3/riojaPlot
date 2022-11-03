@@ -643,7 +643,7 @@ makeStyles <- function(...) {
      if (style$plot.zones == "auto") {
         bs <- rioja::bstick(clust, plot=FALSE)
         bs2 <- bs$dispersion > bs$bstick
-        style$plot.zones <- max(which(bs2)) 
+        style$plot.zones <- max(which(bs2)) + 1
         if (style$plot.zones < 2 & verbose) {
           message("There are no significant zones in these data.")
         }
@@ -1459,8 +1459,8 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NU
   }
   if (nZone == "auto") {
     bs <- rioja::bstick(clust, plot=FALSE)
-    bs2 <- bs$dispersion <= bs$bstick
-    nZone <- which(bs2)[1]
+    bs2 <- bs$dispersion > bs$bstick
+    nZone <- max(which(bs2)) + 1 
     if (nZone < 2 & verbose) {
         message("There are no significant zones in these data.")
      }
