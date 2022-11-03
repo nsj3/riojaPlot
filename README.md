@@ -3,7 +3,7 @@ riojaPlot
 
 Stratigraphic diagrams in R.
 
-```riojaPlot` replaces function `strat.plot` in package `rioja`.
+`riojaPlot` replaces function `strat.plot` in package `rioja`.
 
 Install with:
 
