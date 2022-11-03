@@ -9,3 +9,5 @@ README.md
 ^doc$
 ^Meta$
 ^Figures/*.*
+^Dev/*.*
+^doc/*.*

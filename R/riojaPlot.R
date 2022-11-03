@@ -130,7 +130,8 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
 } 
 
 listStyles <- function() {
-  styles <- unlist(makeStyles())
+#  styles <- unlist(makeStyles())
+  styles <- unlist(sapply(st, function(x) { x[1] } ))
   x <- data.frame(Style=names(styles), Value=styles)
   rownames(x) <- NULL
   x
@@ -180,7 +181,7 @@ makeStyles <- function(...) {
    style$cex.ylabel <- 0.9
    style$cex.xlabel <- 0.9
    style$srt.xlabel <- 90
-   style$srt.xlabel <- 90
+   style$srt.ylabel <- NA
    style$tcl <- -0.2
    style$cex.cumul <- 0.7
    style$clust.data.trans <- "none"
@@ -235,7 +236,6 @@ makeStyles <- function(...) {
    style$x.pc.inc <- 10
    style$fun.lithology <- NA
    style$lithology.width <- 0.03
-   style$srt.ylabel <- NA
 
 #   style$orig.fig <- c(0, 1, 0, 1)
    args <- list(...)
