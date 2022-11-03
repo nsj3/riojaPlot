@@ -3,6 +3,8 @@ riojaPlot
 
 Stratigraphic diagrams in R.
 
+![riojaPlot](Figures/riojaPlot.svg)
+
 `riojaPlot` replaces function `strat.plot` in package `rioja`.
 
 Install with:
