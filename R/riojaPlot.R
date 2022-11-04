@@ -875,7 +875,7 @@ makeStyles <- function(...) {
            yTop <- yTop - strwidth("m", units='figure', cex=cex.xlabel)
       }
    }
-   
+   incX <- 0
    if (is.null(xLeft)) {
       if (!is.null(y.tks.labels))
         ylabs <- y.tks.labels
