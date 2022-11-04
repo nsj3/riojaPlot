@@ -4,6 +4,7 @@
 vignettes/Cache/
 Test/
 Test*.*
+Rp*.*
 /doc/
 /Meta/
 dev/

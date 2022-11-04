@@ -1,5 +1,6 @@
 \name{riojaPlot}
 \alias{riojaPlot}
+\alias{riojaPlot2}
 \alias{addRPZone}
 \alias{addRPClust}
 \alias{addRPClustZone}
@@ -13,6 +14,9 @@ Plots a diagram of multiple biological, physical or chemical parameters agains d
 }
 \usage{
 riojaPlot(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
+          lithology=NULL, riojaPlot=NULL, verbose=TRUE, \dots)
+
+riojaPlot2(riojaPlot, x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
           lithology=NULL, riojaPlot=NULL, verbose=TRUE, \dots)
 
 addRPClust(riojaPlot, clust, xLeft=NULL, xRight=0.99, verbose=TRUE, \dots)
@@ -51,6 +55,8 @@ makeStyles(...)
 
 \details{
 \code{riojaPlot} plots a set of variables in a stratigraphic diagram. Diagrams can be plotted as line graphs, silhouettes or bar charts.  {riojaPlot} extends strat.plot in several ways: variables can be grouped and displayed with different colours, a cumulative summary plot can be added automatically based on the grouping, a cluster dendrogram and resulting zones can be added automatically, a secondary y-axis can be added to plot a depth and age axis, and the figures margins are determined automatically depending on the size and length of labels.  
+
+\code{riojaPlot2}  is just a wrapper around \code{riojaPlot} that takes a \code{riojaPlot} object as the first argument so it can be used with a pipe.
 
 See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPDF")} for a pdf version.
 

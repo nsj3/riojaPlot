@@ -1,20 +1,11 @@
 utils::globalVariables(c("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
                          "groupColours", "groupCex", "groupNames", "lwd.axis", "col.axis", "cumulSpace"))
 
-#riojaPlot2 <- function(rp, x, y, clust=NULL, xLeft=NULL, xRight=0.99, gap=0.01, verbose=TRUE, ...) {
-#   if (is.null(xRight))
-#     xRight <- 0.99
-#   if (is.null(xLeft))
-#     xLeft <- rp$xRight + gap
-#  
-#   ylim <- c(min(rp$ylim), max(rp$ylim))
-#   
-#   .riojaPlot2(x, yvar = y[, 1, drop=FALSE], y.rev=rp$y.rev, xRight=xRight, xLeft=xLeft,
-#      y.axis=FALSE, add=TRUE, yBottom=rp$box[3], yTop=rp$box[4], mgp=NULL, # c(3, 0.6/3, 0.2), 
-#      srt.xlabel=rp$style$srt.xlabel, cex.xlabel=rp$style$cex.xlabel, cex.axis=rp$style$cex.axis, 
-#      clust=clust, ylim=ylim, tcl=rp$style$tcl,  
-#      exag.alpha=rp$style$exag.alpha, col.axis=rp$style$col.axis, plot.top.axis=rp$style$plot.top.axis, ...)
-#}
+riojaPlot2 <- function(riojaPlot, x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
+                      lithology=NULL, verbose=TRUE, ...) {
+   riojaPlot(x, y, selVars=selVars, groups=groups, style=style, clust=clust, 
+                      lithology=lithology, riojaPlot=riojaPlot, verbose=verbose, ...) 
+}
 
 riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
                       lithology=NULL, riojaPlot=NULL, verbose=TRUE, ...) {
@@ -1327,12 +1318,16 @@ addName <- function(x, xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=0)
     rD <- abs((usr2[1] - usr2[2]))
     rf <- fig[1]
     r <- rD/rF * .4 # offset
-    xPos <- tks1[1] - r
+    
+    print(usr2)
+    fin <- par("fin")
+    data2mm <- (1 / (fin[1]*25.54))
+    xPos <-  - data2mm
 
     if (srt.xlabel < 90)
-      text(xPos, yPos, labels=x, adj = c(0, 0), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
+      text(xPos - data2mm*3, yPos, labels=x, adj = c(0, 0), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
     else
-      text(xPos, yPos, labels=x, adj = c(0, 1), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
+      text(xPos, yPos, labels=x, adj = c(0, 0), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
 }
 
 shiny_running = function () {
