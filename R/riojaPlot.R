@@ -152,10 +152,10 @@ makeStyles <- function(...) {
    style$do.clust <- FALSE
    style$plot.clust <- FALSE
    style$plot.zones <- 0
-   style$lwd.bar <- 1
+   style$lwd.bar <- 0.5
    style$lwd.line <- 1
-   style$lwd.poly.line <- 0.6
-   style$lwd.cumul.line <- 0.6
+   style$lwd.poly.line <- 0.5
+   style$lwd.cumul.line <- 0.5
    style$col.bar <- "grey"
    style$bar.back <- FALSE
    style$col.symb <- "black"
@@ -1319,7 +1319,6 @@ addName <- function(x, xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=0)
     rf <- fig[1]
     r <- rD/rF * .4 # offset
     
-    print(usr2)
     fin <- par("fin")
     data2mm <- (1 / (fin[1]*25.54))
     xPos <-  - data2mm
