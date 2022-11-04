@@ -21,7 +21,7 @@ library(riojaPlot)
 vignette("riojaPlot")
 # or vignette("riojaPlotPDF") for a pdf version
 ```
-[riojaPlot gallery](https://htmlpreview.github.io/?Figures/gallery.html)
+[riojaPlot gallery](https://htmlpreview.github.io/?https://github.com/nsj3/riojaPlot/blob/main/Figures/gallery.html)
 
 Please send comments, bug reports and suggestions for improvements and additions to 
 [Stephen.Juggins@ncl.ac.uk](mailto:Stephen.Juggins@ncl.ac.uk).
