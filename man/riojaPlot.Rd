@@ -17,7 +17,7 @@ riojaPlot(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
           lithology=NULL, riojaPlot=NULL, verbose=TRUE, \dots)
 
 riojaPlot2(riojaPlot, x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
-          lithology=NULL, riojaPlot=NULL, verbose=TRUE, \dots)
+          lithology=NULL, verbose=TRUE, \dots)
 
 addRPClust(riojaPlot, clust, xLeft=NULL, xRight=0.99, verbose=TRUE, \dots)
 

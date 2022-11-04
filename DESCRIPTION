@@ -7,7 +7,7 @@ Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
 Depends: R (>= 3.5)
 Imports: grDevices, sjmisc, stringr, dplyr, methods, forcats, rioja
-Suggests: R.rsp
+Suggests: R.rsp, knitr
 Description: Stratigraphic diagrams in R.
 License: GPL-2
 URL: http://www.staff.ncl.ac.uk/stephen.juggins/, https://github.com/nsj3/riojaPlot
