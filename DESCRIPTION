@@ -13,4 +13,4 @@ License: GPL-2
 URL: http://www.staff.ncl.ac.uk/stephen.juggins/, https://github.com/nsj3/riojaPlot
 NeedsCompilation: no
 Repository: CRAN
-VignetteBuilder: R.rsp
+VignetteBuilder: R.rsp, knitr
