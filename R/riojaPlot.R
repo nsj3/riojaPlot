@@ -1461,10 +1461,12 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NU
     box <- riojaPlot$box
     if (!is.null(xLeft))
       box[1] <- xLeft
+    else
+      box[1] <- box[1] + riojaPlot$style$xSpace / 2
     if (!is.null(xRight))
       box[2] <- xRight
     else
-      box[2] <- box[2] - riojaPlot$style$xSpace
+      box[2] <- box[2] - riojaPlot$style$xSpace / 2
     
 #    par(fig=riojaPlot$box)
     par(fig=box)
