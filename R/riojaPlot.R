@@ -1,6 +1,3 @@
-utils::globalVariables(c("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
-                         "groupColours", "groupCex", "groupNames", "lwd.axis", "col.axis", "cumulSpace"))
-
 riojaPlot2 <- function(riojaPlot, x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
                       lithology=NULL, verbose=TRUE, ...) {
    riojaPlot(x, y, selVars=selVars, groups=groups, style=style, clust=clust, 
@@ -9,14 +6,8 @@ riojaPlot2 <- function(riojaPlot, x, y, selVars=NULL, groups=NULL, style=NULL, c
 
 riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, 
                       lithology=NULL, riojaPlot=NULL, verbose=TRUE, ...) {
-   on.exit({
-     warn <- options()$warn
-     options(warn=-1)
-      rm("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
-         "groupColours", "groupCex", "groupNames", "lwd.axis", 
-         "col.axis", "cumulSpace", envir=.GlobalEnv)
-     options(warn=warn)
-   })
+#   on.exit({
+#   })
     
    if (!is.null(riojaPlot)) {
      if (!is(riojaPlot, "riojaPlot")) {
@@ -226,6 +217,11 @@ makeStyles <- function(...) {
    style$x.pc.inc <- 10
    style$fun.lithology <- NA
    style$lithology.width <- 0.03
+   style$user1 <- NA
+   style$user2 <- NA
+   style$user3 <- NA
+   style$user4 <- NA
+   style$centre.xlabel <- FALSE
 
 #   style$orig.fig <- c(0, 1, 0, 1)
    args <- list(...)
@@ -327,6 +323,14 @@ makeStyles <- function(...) {
      style$fun.yaxis <- NULL
    if (is.na(style$ylabPos))
      style$ylabPos <- NULL
+   if (is(style$user1, "logical"))
+     style$user1 <- NULL
+   if (is(style$user2, "logical"))
+     style$user2 <- NULL
+   if (is(style$user3, "logical"))
+     style$user3 <- NULL
+   if (is(style$user4, "logical"))
+     style$user4 <- NULL
 
    clust <- mydata$clust
    if (!is.null(clust))
@@ -406,10 +410,11 @@ makeStyles <- function(...) {
          stop("Too many groups specified, maximum allowed is 10.")
       groupID <- as.integer(gr_names_d[, 2, drop=TRUE])
       groupID2 <- as.integer(gr_names_d2[, 2, drop=TRUE])
-      groupColours <<- col.group
+#      groupColours <<- col.group
       groupColours <- col.group
-      groupNames <<- levels(gr_names_d2$Group)
+#      groupNames <<- levels(gr_names_d2$Group)
       groupNames <- levels(gr_names_d2$Group)
+      style$groupNames <- groupNames
       if (style$plot.groups)
          style$groupColours <- groupColours[groupID]
    }
@@ -515,10 +520,6 @@ makeStyles <- function(...) {
    funlist <- style$fun.xfront
    
    if (style$plot.cumul) {
-#      groupData <<- t(apply(d, 1, 
-#                            function(x) cumsum(tapply(unlist(x), 
-#                            groupID, sum, na.rm=TRUE))))
-#      tt <- table(groupID)
       groupData <<- t(apply(mydata$spec, 1, 
                             function(x) cumsum(tapply(unlist(x), 
                             groupID2, sum, na.rm=TRUE))))
@@ -527,6 +528,7 @@ makeStyles <- function(...) {
          groupData <- t(groupData)
          colnames(groupData) <- names(tt)
       }
+      style$groupData <- groupData
       d <- data.frame(d, Cumulative=c(100, rep(0, nrow(d)-1)))
       style$x.names <- c(style$x.names, "Cumulative")
       nCol <- ncol(d)
@@ -536,26 +538,9 @@ makeStyles <- function(...) {
          funlist <- lapply(1:(nCol-1), function(x) funlist)
       funlist[[nCol]] <- plotCumul
       style$groupColours <- c(style$groupColours, NA)
-#      cumulLine <<- style$plot.cumul.line
-      cumulLineCol <<- style$col.cumul.line
-      cumulLineLwd <<- style$lwd.cumul.line
-#      cumulLine <- style$plot.cumul.line
-      cumulLineCol <- style$col.cumul.line
-      cumulLineLwd <- style$lwd.cumul.line
-      lwd.axis <<- style$lwd.axis
-      lwd.axis <- style$lwd.axis
-      col.axis <<- style$col.axis
-      col.axis <- style$col.axis
-   } # else {
-#     funlist <- style$fun2
-#   }
-   
+   } 
    fin <- par("fin")
    xSpace <- style$xSpace * 10 / fin[1]
-   groupCex <<- style$cex.cumul
-   groupCex <- style$cex.cumul
-   
-#   style$col.line <- style$col.poly.line
    style$col.line <- rep(style$col.line, length(style$groupColours))
    style$col.bar <- rep(style$col.bar, length(style$groupColours))
    style$col.symb <- rep(style$col.symb, length(style$groupColours))
@@ -627,7 +612,9 @@ makeStyles <- function(...) {
                 fun.plotback=style$fun.plotback, fun.yaxis=style$fun.yaxis, 
                 graph.widths=style$graph.widths, x.pc.inc=style$x.pc.inc, 
                 lithology=mydata$lithology, fun.lithology=style$fun.lithology, 
-                lithology.width=style$lithology.width, srt.ylabel=style$srt.ylabel)
+                lithology.width=style$lithology.width, srt.ylabel=style$srt.ylabel, 
+                centre.xlabel=style$centre.xlabel,
+                style=style)
 
    if (!is.null(clust)) {
      if (style$plot.zones == "auto") {
@@ -639,10 +626,10 @@ makeStyles <- function(...) {
         }
      } 
    }    
+   x$style <- style
    if (!is.null(clust) & style$plot.zones > 1) {
       addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, yaxs="i")
    }
-   x$style <- style
    invisible(x)
 }
 
@@ -662,8 +649,11 @@ makeStyles <- function(...) {
                   cumul.mult = 1.0, col.exag.line=NA, lwd.exag.line=0.6, lwd.axis=1, 
                   col.axis="black", omitMissing=TRUE, plot.top.axis=FALSE, plot.bottom.axis=TRUE, 
                   xlabPos=0.1, las.yaxis=1, fun.plotback=NULL, fun.yaxis=NULL, 
-                  lithology=NULL, fun.lithology=NULL, lithology.width=0.5, srt.ylabel=90, ...)
+                  lithology=NULL, fun.lithology=NULL, lithology.width=0.5, srt.ylabel=90, 
+                  centre.xlabel=FALSE, 
+                  style=NULL, ...)
 {
+
 
    d <- as.data.frame(d)
    fcall <- match.call(expand.dots=TRUE)
@@ -873,6 +863,9 @@ makeStyles <- function(...) {
       yTop <- min(yTop, 0.95)
       if (srt.xlabel > 0) {
            yTop <- yTop - strwidth("m", units='figure', cex=cex.xlabel)
+      } else if (srt.xlabel == 0) {
+         maxheight <- max(sapply(x.names, function(x) strheight(x, units="figure", cex=cex.xlabel))) 
+         yTop <- 1.0 - maxheight - xlSpace - 0.01
       }
    }
    incX <- 0
@@ -934,6 +927,7 @@ makeStyles <- function(...) {
 #        xRight <- 0.99
         xLen <- xRight - xLeft
         xInc <- xLen - ((nsp + 1) * xSpace)
+        xInc <- xLen - ((nsp ) * xSpace)
         n <- length(colM)
         inc <- xInc * colM[n]/colM.sum
         wid <- strwidth(x.names[length(x.names)], units='figure', 
@@ -944,6 +938,8 @@ makeStyles <- function(...) {
         if (wid > inc) {
            xRight <- 1 - (wid-inc)
         }
+        xLen <- xRight - xLeft
+        xInc <- xLen - ((nsp) * xSpace)
    } 
    if (is.null(yBottom)) {
       yBottom <- 0.05
@@ -956,7 +952,7 @@ makeStyles <- function(...) {
      xLen <- xRight - xLeft - xSpace
      x1 <- xLeft + xSpace 
    }
-   xInc <- xLen - ((nsp + 1) * xSpace)
+   xInc <- xLen - ((nsp) * xSpace)
    inc <- xInc/colM.sum
    if (inc < 0.0)
      stop("Too many variables, curves will be too small.")
@@ -1027,7 +1023,7 @@ makeStyles <- function(...) {
       fbox=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop)     
       myfig <- par("fig")
       par(fig=fbox)
-      fun.plotback(usr1, fbox)
+      fun.plotback(usr1, fbox, style)
       par(fig=myfig)
    }
 
@@ -1039,7 +1035,7 @@ makeStyles <- function(...) {
           xaxs="i", yaxs = "i", ylim = ylim, tcl=tcll, ...)
 #     rect(0, ylim[1], 1, ylim[2], col="red")
      if (!is.null(fun.lithology))
-        fun.lithology(lithology)
+        fun.lithology(lithology, style)
      par(fig=myfig)
 #     xLeft <- xLeft + lithology.width + xSpace
    }
@@ -1080,7 +1076,7 @@ makeStyles <- function(...) {
         if (!is.null(col.bg))
            rect(par("usr")[1],ylim[1],par("usr")[2],ylim[2], col=col.bg, border=NA)
         if (!is.null(fun1[[i]])) {
-           fun1[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
+           fun1[[i]](x=x_var, y=y_var, i=i, nm=x.names[i], style)
         }
         if (plot.poly[i] & exag[i] & !cumulPlot) {
            y <- c(y_var[1], y_var, y_var[nsam2])
@@ -1135,7 +1131,7 @@ makeStyles <- function(...) {
           points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=cc.symb[i], xpd=FALSE)
        }
        if (!is.null(fun2[[i]])) {
-          fun2[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
+          fun2[[i]](x=x_var, y=y_var, i=i, nm=x.names[i], style)
        }
        if (!cumulPlot) {
           xlabb <- seq(0, colM[i], by = x.pc.inc[i])
@@ -1175,7 +1171,7 @@ makeStyles <- function(...) {
        tks <- axTicks(1)
        us <- par("usr")
        if (!is.null(fun1[[i]])) {
-          fun1[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
+          fun1[[i]](x=x_var, y=y_var, i=i, nm=x.names[i], style)
        }
        if (plot.poly[i] & exag[i] & !cumulPlot) {
           y <- c(y_var[1], y_var, y_var[nsam2])
@@ -1232,7 +1228,7 @@ makeStyles <- function(...) {
           points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=cc.symb[i], xpd=FALSE)
        }
        if (!is.null(fun2[[i]])) {
-          fun2[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
+          fun2[[i]](x=x_var, y=y_var, i=i, nm=x.names[i], style)
        }
        mgpX <- if (is.null(mgp)) { c(3, max(0.0, spc-tcll), 0.3) } else { mgp }
        mgpX3 <- if (is.null(mgp)) { c(3, max(0, 0.2-tcll), 0.3 ) } else { mgp }
@@ -1262,13 +1258,16 @@ makeStyles <- function(...) {
      pos <- usr2[4] + r
      if (usr1[3]-usr1[4] > 0)
         pos <- usr2[4]-r
-     
+     adj.xlabel <- c(0, 1)
      if (!cumulPlot) {
-        par("lheight" = 0.7)
         if (srt.xlabel < 90)
-           text(tks1[1], pos, labels=x.names[i], adj=c(0, 0), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
-        else
-           text(tks1[1], pos, labels=x.names[i], adj=c(0, 1), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
+          adj.xlabel <- c(0, 0)
+        if (srt.xlabel == 0 & centre.xlabel) {
+            adj.xlabel <- c(0.5, 0)
+            tks1 <- mean(usr2[1:2])
+        }
+        par("lheight" = 0.7)
+        text(tks1, pos, labels=x.names[i], adj=adj.xlabel, srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
         par("lheight" = 1)
      }
      usrs[[i]] <- usr2   
@@ -1351,27 +1350,23 @@ shiny_running = function () {
   isNamespace(namespace_frame) && environmentName(namespace_frame) == 'shiny'
 }
 
-plotCumul <- function(x, y, i, nm) 
+plotCumul <- function(x, y, i, nm, style) 
 {
-  nG <- ncol(groupData)
-  groupN <- as.integer(colnames(groupData))
+  nG <- ncol(style$groupData)
+  groupN <- as.integer(colnames(style$groupData))
   N <- length(x)
   usr <- par("usr")
-#  segments(usr[2], usr[3], usr[2], usr[4], col="grey")
-  
+
   yymin <- max(min(y, na.rm=TRUE), min(usr[3:4]))
   yymax <- min(max(y, na.rm=TRUE), max(usr[3:4]))
   
-  rect(usr[1], yymin, usr[2], yymax, border=col.axis, lwd=lwd.axis, xpd=NA)
-#  rect(usr[1], min(y, na.rm=TRUE), usr[2], max(y, na.rm=TRUE), border=col.axis, lwd=lwd.axis, xpd=NA)
-#  segments(usr[2], min(y, na.rm=TRUE), usr[2], max(y, na.rm=TRUE), col="grey")
+  rect(usr[1], yymin, usr[2], yymax, border=style$col.axis, lwd=style$lwd.axis, xpd=NA)
   for (j in nG:1) {
     y2 <- c(y[1], y, y[N])
-    x2 <- c(usr[1], groupData[, j, drop=TRUE], usr[1])
-#    bord <- NA
-#    if (exists("cumulLine") & exists("cumulLineCol") & cumulLine)
-       bord <- cumulLineCol
-    polygon(x2, y2, col=groupColours[groupN[j]], border = bord, lwd=cumulLineLwd, xpd=FALSE)
+    x2 <- c(usr[1], style$groupData[, j, drop=TRUE], usr[1])
+    bord <- style$col.cumul.line
+    polygon(x2, y2, col=style$col.group[groupN[j]], border = bord, 
+            lwd=style$lwd.cumulline, xpd=FALSE)
   } 
   fig <- par("fig")
   oldmar <- par("mar")
@@ -1384,13 +1379,13 @@ plotCumul <- function(x, y, i, nm)
   plot(0, xlim=c(0,1), ylim=c(0, 1), axes=FALSE, type="n", xlab="", ylab="", xaxs="i", yaxs="i")
   fin <- par("fin")
   scale <- 1.0 / fin[2] 
-  lineHeight_in <- strheight("M", units="figure", cex=groupCex) * fin[2]
+  lineHeight_in <- strheight("M", units="figure", cex=style$cex.cumul) * fin[2]
   inc <- min(0.25, lineHeight_in) * scale
   for (i in nG:1) {
-     y <- (nG-i)*inc*1.3 + (0.1* scale) + cumulSpace
-     rect(0.8, y, 1.0, y+inc, col=groupColours[groupN[i]], xpd=NA)
-     if (!is.null(groupNames)) {
-        text(0.75, y+inc/2, groupNames[i], adj=c(1, 0.5), cex=groupCex, xpd=NA)
+     y <- (nG-i)*inc*1.3 + (0.1* scale) + style$cumulSpace
+     rect(0.8, y, 1.0, y+inc, col=style$col.group[groupN[i]], xpd=NA)
+     if (!is.null(style$groupNames)) {
+        text(0.75, y+inc/2, style$groupNames[i], adj=c(1, 0.5), cex=style$cex.cumul, xpd=NA)
      }
   }
   par(mar=oldmar)
@@ -1452,6 +1447,7 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NU
   if (!is(riojaPlot, "riojaPlot")) {
      stop("riojaPlot should be a riojaPlot object")
   }
+  
   if (nZone == "auto") {
     bs <- rioja::bstick(clust, plot=FALSE)
     bs2 <- bs$dispersion > bs$bstick
@@ -1462,11 +1458,16 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NU
   } 
   if (nZone > 1) {
     oldpar <- par(c("fig", "mar", "usr"))
+    box <- riojaPlot$box
     if (!is.null(xLeft))
-      riojaPlot$box[1] <- xLeft
+      box[1] <- xLeft
     if (!is.null(xRight))
-      riojaPlot$box[2] <- xRight
-    par(fig=riojaPlot$box)
+      box[2] <- xRight
+    else
+      box[2] <- box[2] - riojaPlot$style$xSpace
+    
+#    par(fig=riojaPlot$box)
+    par(fig=box)
     par(mar=c(0,0,0,0))
     par(usr=c(0, 1, riojaPlot$usr[3], riojaPlot$usr[4]))
     cc <- cutree(clust, k=nZone)

@@ -79,6 +79,7 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{cex.axis, cex.yaxis, cex.ylabel, cex.xlabel, cex.cumul}}, { font sizes (size relative to default of 1). }
   \item{\code{tcl}}{ tick length for axes, in logical units (default -0.3). }
   \item{\code{srt.xlabel, srt.ylabel}}{ angle (in degrees) of names (default=90). }
+  \item{\code{centre.xlabel}}{ centre the names when srt.xlabel is zero (ie. horizontal, default=FALSE). }
   \item{\code{do.clust}}{ do a CONISS constrained clustering. }
   \item{\code{clust.data.trans}}{ transform data before cluster analysis ("none", "sqrt", or "scale", default "none"). }
   \item{\code{clust.use.selected}}{ use selected variables (ie. those listed in selVars) or all variables when calculating cluster dendrogram (default FALSE). }
@@ -113,9 +114,13 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{cumulSpace}}{ gap to leave between top axis and cumulative plot legend.  Default NA for riojaPlot to guess. }
   \item{\code{fun.lithology}}{ function that passes a single dat frame or tibble of information for plotting the lithology column. }
   \item{\code{lithology.width}}{ width of lithology column, as fraction of page width. }
+  \item{\code{user1, user2, user3, user4}}{ pleceholders to supply additional objects (data frames, lists etc.) to custom functions. }
+  
 }
 
-\code{fun.xback} and \code{fun.xfront} are user-defined functions of the form `myfun(x, y, i, nm)` that pass four arguments: x and y values, the index of the plot (i, from 1 to nplots, left to right) and the variable name (nm) to be plotted, as a named character vector.  
+\code{fun.xback} and \code{fun.xfront} are user-defined functions of the form `myfun(x, y, i, nm, style)` that pass four arguments: x and y values, the index of the plot (i, from 1 to nplots, left to right) and the variable name (nm) to be plotted, as a named character vector.  
+\code{fun.lithology} is a user-defined function of the form `myfun(x, style)` where x is the data frame of lithological information passed to riojaPlot.
+\code{fun.plotback} is a user-defined function of the form `fun.plotback(usr, fig, style)` where usr and fig provides the coordinates of the plotting area in data units(usr) and fractions of screen width and height (fig) (see ?par).
 
 \code{addRPClust} adds a dendrogram to an existing riojaPlot diagram.
 
