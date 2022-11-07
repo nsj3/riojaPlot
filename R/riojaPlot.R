@@ -147,7 +147,7 @@ makeStyles <- function(...) {
    style$lwd.line <- 1
    style$lwd.poly.line <- 0.5
    style$lwd.cumul.line <- 0.5
-   style$col.bar <- "grey"
+   style$col.bar <- "grey"        
    style$bar.back <- FALSE
    style$col.symb <- "black"
    style$col.line <- "black"
@@ -155,6 +155,7 @@ makeStyles <- function(...) {
    style$col.poly.line <- NA
    style$col.cumul.line <- NA
    style$col.zones <- "red"
+   style$lwd.zones <- 1
    style$symb.pch <- 19
    style$symb.cex <- 1
    style$cex.axis <- 0.6
@@ -623,7 +624,7 @@ makeStyles <- function(...) {
    }    
    x$style <- style
    if (!is.null(clust) & style$plot.zones > 1) {
-      addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, yaxs="i")
+      addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, yaxs="i", lwd=style$lwd.zones)
    }
    invisible(x)
 }
@@ -645,7 +646,7 @@ makeStyles <- function(...) {
                   col.axis="black", omitMissing=TRUE, plot.top.axis=FALSE, plot.bottom.axis=TRUE, 
                   xlabPos=0.1, las.yaxis=1, fun.plotback=NULL, fun.yaxis=NULL, 
                   lithology=NULL, fun.lithology=NULL, lithology.width=0.5, srt.ylabel=90, 
-                  centre.xlabel=FALSE, 
+                  centre.xlabel=FALSE, lwd.zones=style$lwd.zones,
                   style=NULL, ...)
 {
 
