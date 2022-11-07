@@ -1486,7 +1486,7 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL, xRight=NU
 }
 
 addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight=0.99, ...) {
-   fun.zone <- function(x, y, i, nm) {
+   fun.zone <- function(x, y, i, nm, style) {
       usr <- par("usr")
       names <- names(y)
       text(0.5, y, labels=names, adj=c(0.5, 0.5), ...)
