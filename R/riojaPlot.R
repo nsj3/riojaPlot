@@ -283,16 +283,11 @@ makeStyles <- function(...) {
    
    if (is.na(style$cumulSpace)) {
       if (style$plot.top.axis) {
-         cumulSpace <- 0.1
-         cumulSpace <<- 0.1
+         style$cumulSpace <- 0.1
       } else {
-         cumulSpace <- 0
-         cumulSpace <<- 0
+         style$cumulSpace <- 0
       }
-   } else {
-       cumulSpace <- style$cumulSpace
-       cumulSpace <<- style$cumulSpace
-   }
+   } 
    
    if (is.na(style$xLeft))
      style$xLeft <- NULL
