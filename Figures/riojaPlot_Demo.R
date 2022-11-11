@@ -619,6 +619,7 @@ riojaPlot(BSi, BSi.chron[, "Age BP", drop=FALSE],
            plot.line=FALSE, plot.symb=TRUE, symb.cex=0.3, fun.xfront=fun.gam,
           x.names="Biog. silica (wt %)")
 
+windows(width=10, height=5)
 # changing widths
 
 widths <- rep(1, ncol(poll))

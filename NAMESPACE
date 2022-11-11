@@ -14,8 +14,7 @@ importFrom(methods, is)
 
 importFrom(forcats, fct_explicit_na)
 
-importFrom("grDevices", "col2rgb", "rgb", "dev.size")
-
+import(grDevices)
 import(graphics)
 import(stats)
 import(utils)

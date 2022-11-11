@@ -76,7 +76,7 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{lwd.bar, lwd.line, lwd.pol.line, lwd.cumul.line, lwd.zones}}{ thickness of bars and lines (default thickness for base graphics is 1). }
   \item{\code{col.bar, col.poly.line, col.poly, col.symb, col.zones, col.cumul.line, col.exag.line}}{ colour of bars, lines, polygon outlines and fills, symbols, zones and lines on cumulative plot. }
   \item{\code{bar.back}}{, plot horizontal bars on top or below shaded silhouettes (default TRUE). }
-  \item{\code{cex.axis, cex.yaxis, cex.ylabel, cex.xlabel, cex.cumul}}, { font sizes (size relative to default of 1). }
+  \item{\code{cex.xaxis, cex.yaxis, cex.ylabel, cex.xlabel, cex.cumul}}, { font sizes (size relative to default of 1). }
   \item{\code{tcl}}{ tick length for axes, in logical units (default -0.3). }
   \item{\code{srt.xlabel, srt.ylabel}}{ angle (in degrees) of names (default=90). }
   \item{\code{centre.xlabel}}{ centre the names when srt.xlabel is zero (ie. horizontal, default=FALSE). }
@@ -85,28 +85,31 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{clust.use.selected}}{ use selected variables (ie. those listed in selVars) or all variables when calculating cluster dendrogram (default FALSE). }
   \item{\code{plot.clust}}{ add a CONISS cluster dendrogram. }
   \item{\code{clust.width}}{ width of the dendrogram (as fraction of page width). }
-  \item{\code{exag}}{ show exaggereted curves (default FALSE. }
+  \item{\code{plot.exag}}{ show exaggereted curves (default FALSE. }
   \item{\code{col.exag}}{ colour for exaggerations, either a colour or "auto". }
   \item{\code{exag.mult}}{ multiplication factor for exaggerations (default 2). }
   \item{\code{exag.alpha}}{ alpha value for exaggeration curves. }
   \item{\code{plot.groups}}{ show curves with different colours (default FALSE). }
   \item{\code{plot.cumul}}{ add a cumulative summary based on groups on right of diagram (default FALSE). }
   \item{\code{col.group}}{ character vector of 10 colours for groups (will be recycled to 10). }
-  \item{\code{names.break.long}}{ break long names (default TRUE). }
-  \item{\code{names.break.n}}{ number of characters to break after (default 20). }
-  \item{\code{names.italicize}}{ italicize names. }
+  \item{\code{xlabels}}{ character vector of labels for the plots (overrides column names). }
+  \item{\code{labels.break.long}}{ break long names (default TRUE). }
+  \item{\code{labels.break.n}}{ number of characters to break after (default 20). }
+  \item{\code{labels.italicize}}{ italicize names. }
   \item{\code{xRight}}{ right hand position of plot (as fraction of page width). }
   \item{\code{xLeft, xRight}}{ left and right hand position of plot (as fraction of page width). Will be determined automatically depending of label sizes, override to fine-tune. }
   \item{\code{yTop, yBottom}}{ top and bottom positions of plot (as fraction of page height). Will be determined automatically depending of label sizes, override to fine-tune. yBottom default is 0.05, increase if axis labels are truncated. }
-  \item{\code{las.axis}}{ orientation of x-axis labels (1=horz, 2=vert, default 1). }
+  \item{\code{las.xaxis, las.xaxis}}{ orientation of x- and y-axis labels (1=horz, 2=vert, default 1). }
   \item{\code{fun.xback, fun.xfront}}{ custom functions of add elements to a plot above (fun.xfront) or behind (fun.xback) data. See below. }
   \item{\code{x.pc.omit0}}{ omit zero value of axis values when scaling for percent data (default TRUE). }
   \item{\code{x.pc.inc}}{ for percentage diagrams single value or numeric vector of intervals for x-axes. }
   \item{\code{min.width.pc}}{ for percentage diagrams the minimim data width of the x-axes. }
+  \item{\code{scale.minmax}}{ logical, for non-percentage diagrams show only mimimum and maximum values on the x-axis to avoid label crowding (default FALSE). }
+  \item{\code{minmax}}{ for non-percentage diagrams an optional dataframe with two columns containing the minimum and maximum values of the x-axis scale for each variable. }
   \item{\code{graph.widths}}{ vector of relative widths for each graph (default 1). }
   \item{\code{xSpace}}{ space between individual graphs (fraction of page width, default=0.01). }
   \item{\code{xGap}}{ space between datasets plotted by repeated calls to riojaPlot (fraction of page width, default=0.01). }
-  \item{\code{ylabSpace}}{ x-position of y-axis label when secondary y-axis is not used, in lines (use to tweak position of y-axis label, try values of 2-3). }
+  \item{\code{ylabPos}}{ x-position of y-axis label when secondary y-axis is not used (use to tweak position of y-axis label, try values of 0.1-0.4). }
   \item{\code{sep.bar}}{ plot different colours for bars for different levels?  Default FALSE. }
   \item{\code{col.sep.bar}}{ character vector with colours for bars for each sample. }
   \item{\code{plot.top.axis, plot.bottom.axis}}{ show x-axes on top and/or bottom of plots (default FALSE, TRUE respectively. }
@@ -181,7 +184,7 @@ selTaxa <- names(mx[mx > 5])
 riojaPlot(spec, yvar, selTaxa,
    yvar.name="Depth (cm)", 
    scale.percent=TRUE,
-   exag=TRUE)
+   plot.exag=TRUE)
 
 # group taxa by type and add cumulative graph
 # extract types
@@ -193,7 +196,7 @@ riojaPlot(spec, yvar, selTaxa, types,
    scale.percent=TRUE,
    plot.groups=TRUE,
    plot.cumul=TRUE,
-   exag=TRUE)
+   plot.exag=TRUE)
 
 # or plot on age scale with depth as secondary and italicise names
 riojaPlot(spec, yvar, selTaxa, types,
@@ -206,8 +209,8 @@ riojaPlot(spec, yvar, selTaxa, types,
    plot.sec.axis=TRUE, 
    plot.groups=TRUE, 
    plot.cumul=TRUE,
-   exag=TRUE,
-   names.italicise = TRUE)
+   plot.exag=TRUE,
+   labels.italicise = TRUE)
 
 # add a zonation
 
@@ -221,11 +224,11 @@ riojaPlot(spec, yvar, selTaxa, types,
    scale.percent=TRUE,
    plot.groups=TRUE, 
    plot.cumul=TRUE,
-   exag=TRUE, 
+   plot.exag=TRUE, 
    do.clust=TRUE,
    plot.clust=TRUE, 
    plot.zones="auto", 
-   names.italicise = TRUE)
+   labels.italicise = TRUE)
 
 # save settings as a style and apply to figure, fine-tuning the y-axis:
 
@@ -234,7 +237,7 @@ mystyle <- makeStyles(
    scale.percent=TRUE,
    plot.groups=TRUE, 
    plot.cumul=TRUE,
-   exag=TRUE, 
+   plot.exag=TRUE, 
    plot.bar="full",
    plot.poly=TRUE,
    bar.back=TRUE,

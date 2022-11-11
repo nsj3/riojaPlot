@@ -25,6 +25,5 @@ vignette("riojaPlot")
 
 [Demonstration R script](Figures/riojaPlot_Demo.R)
 
-
 Please send comments, bug reports, and suggestions for improvements and additions to 
 [Stephen.Juggins@ncl.ac.uk](mailto:Stephen.Juggins@ncl.ac.uk).
