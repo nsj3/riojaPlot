@@ -250,13 +250,13 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
    if (is.null(mydata$spec) | is.null(mydata$chron) )
       stop("You must specify a table of data to plot (x) and a data frame with at least one variable for the y-axis scale (y) data");
   
-   if (is.na(style$xlabels[1])) {
-      style$xlabels <- colnames(mydata$spec)
-      names(style$xlabels) <- style$xlabels
-   } else {
+   if (is.expression(style$xlabels[1]) || !is.na(style$xlabels[1])) {
      if (length(style$xlabels) != ncol(mydata$spec))
        stop("Number of names in xlabels must equal number of columns in x")
      names(style$xlabels) <- colnames(mydata$spec)
+   } else {
+      style$xlabels <- colnames(mydata$spec)
+      names(style$xlabels) <- style$xlabels
    }
 
    names(style$plot.poly) <- colnames(mydata$spec)    

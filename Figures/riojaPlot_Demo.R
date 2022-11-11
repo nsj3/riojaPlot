@@ -180,11 +180,11 @@ riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           plot.sec.axis = TRUE,
           plot.groups=TRUE,
           plot.cumul=TRUE,
-          names.italicise=TRUE,  # italicise names
+          labels.italicise=TRUE,  # italicise names
           scale.percent=TRUE,
           plot.top.axis=TRUE,    # add an x-axis at top
           srt.xlabel=45,         # rotate names
-          cex.axis=0.5)          # reduce font of x-axes
+          cex.xaxis=0.5)          # reduce font of x-axes
 
 # add dendrogram
 # clust.data.trans="sqrt" transforms data to sqrt. This gives Hellinger's 
@@ -198,7 +198,7 @@ riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           plot.cumul=TRUE,
           scale.percent=TRUE,
           srt.xlabel=45,
-          cex.axis=0.5,
+          cex.xaxis=0.5,
           do.clust=TRUE,     # perform clustering
           clust.data.trans="sqrt", # transform data to sqrt before calculating dissimilarities
           plot.clust=TRUE)
@@ -214,7 +214,7 @@ riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           plot.top.axis=TRUE,
           srt.xlabel=45,
           cex.xlabel=0.7,
-          cex.axis=0.5,
+          cex.xaxis=0.5,
           do.clust=TRUE,
           clust.data.trans="sqrt",
           plot.clust=TRUE,
@@ -435,9 +435,9 @@ riojaPlot(ponds.diat, ponds.TP, selVars=ponds.sel,
           cex.yaxis=0.6,
           wa.order="topleft", 
           fun.xfront=myfun,
-          names.italicise=TRUE,
-          las.axis=2, 
-          cex.axis=0.5)
+          labels.italicise=TRUE,
+          las.xaxis=2, 
+          cex.xaxis=0.5)
 
 ponds.TP <- ponds.TP %>%  mutate(bar.cols=case_when(TP < 100 ~ "green",
                             TP >= 100 & TP < 200 ~ "blue",
@@ -462,9 +462,9 @@ riojaPlot(ponds.diat, ponds.TP, selVars=ponds.sel,
           cex.xlabel=0.6, 
           cex.yaxis=0.6,
           wa.order="bottomleft", 
-          names.italicise=TRUE,
-          las.axis=2, 
-          cex.axis=0.5)
+          labels.italicise=TRUE,
+          las.xaxis=2, 
+          cex.xaxis=0.5)
 
 
 # Different styles for different curves
@@ -515,7 +515,7 @@ rp <- riojaPlot(maule.data, maule.chron, groups=groups,
           ylabPos=2.2,
           symb.cex=0.5,
           ytks1=myticks, 
-          las.axis=2,
+          las.xaxis=2,
           yBottom=0.06
           )
 
@@ -548,9 +548,8 @@ riojaPlot(aber.poll, aber.chron,
    plot.bar = !sel,
    plot.line=FALSE,
    lwd.bar=0.6,
-   exag=TRUE,
+   plot.exag=TRUE,
    fun.xfront=funlist)
-
 
 # Plotting multiple datasets, add smooths
 
@@ -601,12 +600,13 @@ rp1 <- riojaPlot(pollen, pollen.chron, groups=types,
           yTop=0.8  )
 
 xlab1 <- expression(Mag.~susc.~(10^{-3}~SI))
+
 rp2 <- riojaPlot(mag, mag.chron[, "Age BP", drop=FALSE], 
            riojaPlot=rp1, xGap = 0.01,
            xRight=0.8, scale.minmax=FALSE, 
            plot.bar=FALSE, plot.line=F, 
            plot.symb=TRUE, symb.cex=0.3, fun.xfront=fun.gam,
-           x.names=xlab1)
+           xlabels=xlab1)
 rp3 <- riojaPlot(loi, loi.chron[, "Age BP", drop=FALSE], 
            riojaPlot=rp2,
            xRight=0.9, 
@@ -617,9 +617,8 @@ riojaPlot(BSi, BSi.chron[, "Age BP", drop=FALSE],
            xRight=0.99, 
            scale.minmax=FALSE, plot.bar=FALSE, 
            plot.line=FALSE, plot.symb=TRUE, symb.cex=0.3, fun.xfront=fun.gam,
-          x.names="Biog. silica (wt %)")
+          xlabels="Biog. silica (wt %)")
 
-windows(width=10, height=5)
 # changing widths
 
 widths <- rep(1, ncol(poll))
@@ -635,7 +634,7 @@ riojaPlot(poll, chron, selVars=selTaxa,
           graph.widths=widths,
           min.width.pc=5, 
           x.pc.inc=inc,
-          cex.axis=0.5,
-          las.axis=2)
+          cex.xaxis=0.5,
+          las.xaxis=2)
 
 
