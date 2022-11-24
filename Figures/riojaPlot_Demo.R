@@ -319,6 +319,25 @@ rp1 <- riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           scale.percent=TRUE,
           plot.top.axis=TRUE,
           ytks1=seq(6000, 14500, by=500),
+          xRight=0.9)
+
+addRPClust(rp1, clust)
+addRPClustZone(rp1, clust, col="red")
+
+# We can put dendrogram on right by pre-calculating the zonation
+# and adding to the plot
+
+clust <- chclust(dist(sqrt(poll)))
+rp1 <- riojaPlot(poll, chron, groups=types, selVars=mx5_names,
+          yvar.name="Age (years BP)",
+          ymin=6290, ymax=14250, yinterval=500,
+          sec.yvar.name="Depth (cm)",
+          plot.sec.axis = TRUE,
+          plot.groups=TRUE,
+          plot.cumul=TRUE,
+          scale.percent=TRUE,
+          plot.top.axis=TRUE,
+          ytks1=seq(6000, 14500, by=500),
           xRight=0.75)
 
 rp2 <- riojaPlot(pca, chron, riojaPlot=rp1, 
@@ -328,12 +347,39 @@ rp2 <- riojaPlot(pca, chron, riojaPlot=rp1,
           xRight=0.9,
           fun.xback=myfun)
 
-addRPClust(rp2, clust)
-addRPClustZone(rp2, clust, xLeft=rp1$box[1], col="red")
+rp3 <- addRPClustZone(rp2, clust, col="red")
+addRPClust(rp3, clust)
+
+# or pipe to riojaPlot2
+
+rp1 <- riojaPlot(poll, chron, groups=types, selVars=mx5_names,
+          yvar.name="Age (years BP)",
+          ymin=6290, ymax=14250, yinterval=500,
+          sec.yvar.name="Depth (cm)",
+          plot.sec.axis = TRUE,
+          plot.groups=TRUE,
+          plot.cumul=TRUE,
+          scale.percent=TRUE,
+          plot.top.axis=TRUE,
+          ytks1=seq(6000, 14500, by=500),
+          xRight=0.75) |>
+riojaPlot2(pca, chron, 
+          yvar.name="Age (years BP)",
+          plot.bar=FALSE,
+          col.axis=NA,
+          xRight=0.9,
+          fun.xback=myfun) |>
+addRPClustZone(clust, col="red") |>
+addRPClust(clust)
+
 
 # Add a zone column with names
 
 clust <- chclust(dist(sqrt(poll)))
+zone.y <- c(7000, 9000, 10500, 12000, 13500)
+zone.names <- paste("Zone", 1:5)
+zones <- data.frame(zone.y, zone.names)
+zones
 rp1 <- riojaPlot(poll, chron, groups=types, selVars=mx5_names,
           yvar.name="Age (years BP)",
           ymin=6290, ymax=14250, yinterval=500,
@@ -354,14 +400,9 @@ rp2 <- riojaPlot(pca, chron, riojaPlot=rp1,
           xRight=0.82,
           fun.xback=myfun)
 
-zone.y <- c(7000, 9000, 10500, 12000, 13500)
-zone.names <- paste("Zone", 1:5)
-zones <- data.frame(zone.y, zone.names)
-zones
-addRPZoneNames(rp1, zones, xLeft=0.82, xRight=0.9, cex=0.6)  
-  
-addRPClust(rp1, clust, xLeft=0.9)
-addRPClustZone(rp1, clust, xLeft=rp1$box[1], xRight=0.9, col="red")
+rp3 <- addRPZoneNames(rp2, zones, xRight=0.9, cex=0.6)  
+rp4 <- addRPClustZone(rp3, clust, col="red")
+addRPClust(rp4, clust)
 
 # Add a column of lithology using a custom function
 

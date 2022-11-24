@@ -44,6 +44,7 @@ makeStyles <- function(...) {
    style$col.poly.line <- NA
    style$col.cumul.line <- NA
    style$col.zones <- "red"
+   style$col.zone.column <- "grey"
    style$lwd.zones <- 1
    style$symb.pch <- 19
    style$symb.cex <- 1
@@ -245,7 +246,7 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
 
 .riojaPlot1 <- function(mydata, style, riojaPlot=NULL, verbose) 
 {
-   orig.fig <- par("fig")
+#   orig.fig <- par("fig")
 
    if (is.null(mydata$spec) | is.null(mydata$chron) )
       stop("You must specify a table of data to plot (x) and a data frame with at least one variable for the y-axis scale (y) data");
@@ -608,7 +609,7 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
                 y.tks.labels=style$yLabels, col.bg=NULL, col.exag=style$col.exag, exag.mult=style$exag.mult, 
                 x.names=style$xlabels, fun2=funlist, xSpace=xSpace, tcl=style$tcl,
                 clust.width=style$clust.width, xRight=style$xRight, cumul.mult=style$cumul.mult, 
-                orig.fig=orig.fig, exag.alpha=style$exag.alpha, fun1=style$fun.xback,
+                exag.alpha=style$exag.alpha, fun1=style$fun.xback, # orig.fig=orig.fig, 
                 ylabPos=style$ylabPos, x.pc.omit0=style$x.pc.omit0, lwd.poly.line=style$lwd.poly.line,
                 lwd.line=style$lwd.line, col.exag.line=style$col.exag.line,
                 lwd.exag.line=style$lwd.exag.line, lwd.axis=style$lwd.axis, col.axis=style$col.axis, 
@@ -635,8 +636,15 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
      } 
    }    
    x$style <- style
+   dbox <- x$box
+   if (!is.null(riojaPlot)) {
+      dbox <- c(riojaPlot$dbox[1], x$box[2], x$box[3], x$box[4])
+   } 
+   names(dbox) <- c("xLeft", "xRight", "yBottom", "yTop")
+   x$dbox <- dbox
    if (!is.null(clust) & style$plot.zones > 1) {
-      addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, yaxs="i", lwd=style$lwd.zones)
+#      addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, yaxs="i", lwd=style$lwd.zones)
+      addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, lwd=style$lwd.zones)
    }
    invisible(x)
 }
@@ -672,15 +680,21 @@ addRPZone <- function(riojaPlot, upper, lower=NULL, xLeft=NULL, xRight=NULL, col
      stop("riojaPlot should be a riojaPlot object")
   }
   oldpar <- par(c("fig", "mar", "usr"))
-  if (!is.null(xLeft))
-    riojaPlot$box[1] <- xLeft
-  if (!is.null(xRight))
-    riojaPlot$box[2] <- xRight
+  box <- riojaPlot$dbox
+    box <- riojaPlot$dbox
+    if (!is.null(xLeft))
+      box[1] <- xLeft
+    else
+      box[1] <- box[1] + riojaPlot$style$xSpace / 2
+    if (!is.null(xRight))
+      box[2] <- xRight
+    else
+      box[2] <- box[2] - riojaPlot$style$xSpace / 2
   make.col <- function(x, alpha) {
       apply(col2rgb(x)/255, 2, function(x) rgb(x[1], x[2], x[3], alpha))
   }
   fillcol <- make.col(col, alpha)
-  par(fig=rioja::figCnvt(riojaPlot$orig.fig, riojaPlot$box))
+  par(fig=box)
   par(mar=c(0,0,0,0))
   par(usr=c(0, 1, riojaPlot$usr[3], riojaPlot$usr[4]))
   if (is.null(lower))
@@ -698,9 +712,13 @@ addRPClust <- function(riojaPlot, clust, xLeft=NULL, xRight=0.99, verbose=TRUE, 
   if (is.null(clust) | !is(clust, "chclust"))
     stop("clust show be a chclust object.")
   oldpar <- par(c("fig", "mar", "usr"))
+  
+  box <- c(riojaPlot$box[2], xRight, riojaPlot$box[3], riojaPlot$box[4])
+  names(box) <- c("xLeft", "xRight", "yBottom", "yTop")
   if (!is.null(xLeft))
-    riojaPlot$box[2] <- xLeft
-  par(fig = c(riojaPlot$box[2], xRight, riojaPlot$box[3], riojaPlot$box[4]))
+    box[1] <- xLeft
+  
+  par(fig = box)
   par(mar=c(0,0,0,0))
   par(new = TRUE)
   ylim <- riojaPlot$ylim
@@ -717,6 +735,8 @@ addRPClust <- function(riojaPlot, clust, xLeft=NULL, xRight=0.99, verbose=TRUE, 
             tcl=riojaPlot$style$tcl)
      }
    par(oldpar)
+   riojaPlot$box <- box
+   riojaPlot$dbox[2] <- xRight
    invisible(riojaPlot)
 }
 
@@ -736,7 +756,7 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL,
   } 
   if (nZone > 1) {
     oldpar <- par(c("fig", "mar", "usr"))
-    box <- riojaPlot$box
+    box <- riojaPlot$dbox
     if (!is.null(xLeft))
       box[1] <- xLeft
     else
@@ -745,7 +765,7 @@ addRPClustZone <- function(riojaPlot, clust, nZone="auto", xLeft=NULL,
       box[2] <- xRight
     else
       box[2] <- box[2] - riojaPlot$style$xSpace / 2
-    
+
 #    par(fig=riojaPlot$box)
     par(fig=box)
     par(mar=c(0,0,0,0))
@@ -769,8 +789,8 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
       usr <- par("usr")
       text(0.5, y, labels=style$user1, adj=c(0.5, 0.5), ...)
       if (showColumn) {
-         segments(usr[1], usr[3], usr[1], usr[4], col=riojaPlot$style$col.axis, xpd=NA, ...)
-         segments(usr[2], usr[3], usr[2], usr[4], col=riojaPlot$style$col.axis, xpd=NA, ...)
+         segments(usr[1], usr[3], usr[1], usr[4], col=riojaPlot$style$col.zone.column, xpd=NA, ...)
+         segments(usr[2], usr[3], usr[2], usr[4], col=riojaPlot$style$col.zone.column, xpd=NA, ...)
       }
    }
    x <- data.frame(x=rep(c(0, 1), length.out=nrow(zones)))
@@ -778,10 +798,9 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
    
    
    if (is.null(xLeft))
-     xLeft <- riojaPlot$xRight
+     xLeft <- riojaPlot$box[2] 
    x <- riojaPlot(x, y, user1=zones[, 2, drop=TRUE],
             riojaPlot=riojaPlot, 
-            col.axis=NA,
             xRight=xRight,
             xLeft=xLeft,
             xlabels="",
@@ -790,7 +809,8 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
             plot.top.axis=FALSE,
             plot.bottom.axis=FALSE,
             fun.xfront=fun.zone)
-  riojaPlot$box[2] <- xRight
+  riojaPlot$dbox[2] <- xRight
+  riojaPlot$box <- x$box
   invisible(riojaPlot)
 }
 
@@ -847,7 +867,7 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
                   sep.bar=FALSE, col.sep.bar="black", bar.back=FALSE, plot.poly=FALSE, col.poly="grey", 
                   col.poly.line=NA, lwd.poly.line=1, plot.symb=FALSE, symb.pch=19, symb.cex=1,
                   x.names=NULL, cex.xlabel=1.0, srt.xlabel=90, mgp=NULL, #c(3, cex.axis/3, 0.2),
-                  ylabPos=NULL, cex.axis=0.8, clust=NULL, clust.width=0.1, orig.fig=c(0, 1, 0, 1), 
+                  ylabPos=NULL, cex.axis=0.8, clust=NULL, clust.width=0.1, # orig.fig=c(0, 1, 0, 1), 
                   exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, 
                   col.bg=NULL, fun1=NULL, fun2=NULL, add=FALSE,  
                   cumul.mult = 1.0, col.exag.line=NA, lwd.exag.line=0.6, lwd.axis=1, 
@@ -912,9 +932,9 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
    
    oldfig = par("fig")
    oldmai <- par("mai")
-   if (is.null(orig.fig)) {
-      orig.fig = par("fig")
-   }
+#   if (is.null(orig.fig)) {
+#      orig.fig = par("fig")
+#   }
    if (exag.mult < 1.0)
       exag <- FALSE
    nsp <- ncol(d)
@@ -1180,7 +1200,8 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
 #     mgpY <- if (is.null(mgp)) { c(3, max(0.0, 0.3 + 0.1 - tcll), 0.3) } else { mgp }
      mgpY <- if (is.null(mgp)) { c(3, max(0.0, 0.1 - tcly), 0) } else { mgp }
      if (doSecYvar) {
-       par(fig = rioja::figCnvt(orig.fig, c(yAxis2Pos, yAxis2Pos+0.2, yBottom, yTop)), new=add)
+#       par(fig = rioja::figCnvt(orig.fig, c(yAxis2Pos, yAxis2Pos+0.2, yBottom, yTop)), new=add)
+       par(fig = c(yAxis2Pos, yAxis2Pos+0.2, yBottom, yTop), new=add)
        plot(0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", 
             yaxs = "i", ylim = ylim, tcl=tcly, ...)
        axis(side=2, las=las.yaxis, at=ylab2$y, labels = as.character(format(ylab2$x)), 
@@ -1189,8 +1210,8 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
        add <- TRUE
      }
 
-     par(fig = rioja::figCnvt(orig.fig, c(xLeft, xLeft+0.2, yBottom, yTop)), new=add)
-#     par(fig = rioja::figCnvt(orig.fig, c(x1, x1+0.2, yBottom, yTop)), new=add)
+#     par(fig = rioja::figCnvt(orig.fig, c(xLeft, xLeft+0.2, yBottom, yTop)), new=add)
+     par(fig = c(xLeft, xLeft+0.2, yBottom, yTop), new=add)
      plot(NA, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", 
           yaxs = "i", ylim = ylim, tcl=tcly, ...)
      if (mode(y.tks)=="list") {
@@ -1239,8 +1260,10 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
 
    if (!is.null(lithology)) {
      myfig <- par("fig")
-     par(fig = rioja::figCnvt(orig.fig, c(xLeft+xSpace, xLeft+lithology.width+xSpace, 
-                                          yBottom, yTop)), new=TRUE)
+#     par(fig = rioja::figCnvt(orig.fig, c(xLeft+xSpace, xLeft+lithology.width+xSpace, 
+#                                          yBottom, yTop)), new=TRUE)
+     par(fig = c(xLeft+xSpace, xLeft+lithology.width+xSpace, 
+                                          yBottom, yTop), new=TRUE)
      plot(0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", 
           xaxs="i", yaxs = "i", ylim = ylim, ...)
 #     rect(0, ylim[1], 1, ylim[2], col="red")
@@ -1277,7 +1300,8 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
      par(lend = "butt")
      if (scale.percent) {
         inc2 <- inc * colM[i]
-        par(fig = rioja::figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
+#        par(fig = rioja::figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
+        par(fig = c(x1, x1 + inc2, yBottom, yTop))
         xxlim <- c(0, ifelse(cumulPlot, colM[i]/cumul.mult, colM[i]/graph.widths[i]))
         plot(0, 0, cex = 0.5, xlim = xxlim, 
              axes = FALSE, xaxs = "i", type = "n", yaxs = "i", ylim = ylim, xlab="", ylab="", ...)
@@ -1373,7 +1397,8 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
        x1 <- x1 + inc2 + xSpace
      } else {
        inc2 <- inc * colM[i]
-       par(fig = rioja::figCnvt(orig.fig, c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop)))
+#       par(fig = rioja::figCnvt(orig.fig, c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop)))
+       par(fig = c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop))
        if (!is.null(minmax)) {
           plot(x_var, y_var, cex = 0.5, axes = FALSE, xaxs = "i", 
                type = "n", yaxs = "i", ylim = ylim, xlim=c(minmax[i, 1], minmax[i,2]), ...)
@@ -1496,7 +1521,8 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
    }
      
    if (!is.null(clust)) {
-      par(fig = rioja::figCnvt(orig.fig, c(x1, xRight+clust.width, yBottom, yTop)))
+#      par(fig = rioja::figCnvt(orig.fig, c(x1, xRight+clust.width, yBottom, yTop)))
+      par(fig = c(x1, xRight+clust.width, yBottom, yTop))
       par(mar=c(0,0,0,0))
       par(new = TRUE)
       if (y.rev)
@@ -1513,12 +1539,12 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
    par(mai = oldmai)
    oldfig[oldfig < 0] <- 0
    par(fig = oldfig)
-   xRight2 <- xRight + ifelse(is.null(clust), 0, clust.width)
+#   xRight2 <- xRight + ifelse(is.null(clust), 0, clust.width)
    fbox <- c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop)
    names(fbox) <- c("xLeft", "xRight", "yBottom", "yTop")
 
    ll <- list(call=fcall, box=fbox, 
-              usr = usr1, mgpX=mgpX, mgpX3=mgpX3, xRight=xRight2, orig.fig=orig.fig,
+              usr = usr1, mgpX=mgpX, mgpX3=mgpX3, # xRight=xRight2, # orig.fig=orig.fig,
               yvar=yvar[, 1, drop=TRUE], ylim=ylim, y.rev=y.rev, figs=figs, usrs=usrs)
    class(ll) <- "riojaPlot"
    invisible(ll)

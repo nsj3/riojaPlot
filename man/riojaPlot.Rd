@@ -74,7 +74,7 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{wa.order}}{ rearrange the curves to show trend from bottom left to top right (default FALSE). }
   \item{\code{plot.bar, plot.line, plot.poly, plot.symb}}{ show bars, lines, polygons (silhouettes) and / or symbols (defaults to polygons with thin horizintal lines).}
   \item{\code{lwd.bar, lwd.line, lwd.pol.line, lwd.cumul.line, lwd.zones}}{ thickness of bars and lines (default thickness for base graphics is 1). }
-  \item{\code{col.bar, col.poly.line, col.poly, col.symb, col.zones, col.cumul.line, col.exag.line}}{ colour of bars, lines, polygon outlines and fills, symbols, zones and lines on cumulative plot. }
+  \item{\code{col.bar, col.poly.line, col.poly, col.symb, col.zones, col.zone.column, col.cumul.line, col.exag.line}}{ colour of bars, lines, polygon outlines and fills, symbols, zones and lines on cumulative plot. }
   \item{\code{bar.back}}{, plot horizontal bars on top or below shaded silhouettes (default TRUE). }
   \item{\code{cex.xaxis, cex.yaxis, cex.ylabel, cex.xlabel, cex.cumul}}, { font sizes (size relative to default of 1). }
   \item{\code{tcl}}{ tick length for axes, in logical units (default -0.3). }
