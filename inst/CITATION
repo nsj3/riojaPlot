@@ -7,8 +7,8 @@ citEntry(entry="Manual",
 	author = personList(as.person("Steve Juggins")),
 	year = format(as.Date(meta$Date), "%Y"),
 	note = paste("R package version", meta$Version),
-	url = "https://cran.r-project.org/package=riojaPlot",
+	url = "https://github.com/nsj3/riojaPlot",
 	textVersion =	paste("Juggins, S. (",format(as.Date(meta$Date), "%Y"),") ", 
   "riojaPlot: Stratigraphic diagrams in R, package version (",
-	meta$Version, ")."," (https://cran.r-project.org/package=riojaPlot).", sep="")
+	meta$Version, ")."," (https://github.com/nsj3/riojaPlot).", sep="")
 )

@@ -91,7 +91,8 @@ makeStyles <- function(...) {
    style$xSpace <- 0.005
    style$x.pc.omit0 <- TRUE
    style$lwd.axis <- 1
-   style$col.axis <- "grey"
+   style$col.axis <- "black"
+   style$col.baseline <- "grey"
    style$min.width.pc <- 5
    style$las.xaxis <- 1
    style$las.yaxis <- 1
@@ -189,6 +190,7 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
       style$tcl <- riojaPlot$style$tcl  
       style$exag.alpha <- riojaPlot$style$exag.alpha
       style$col.axis <- riojaPlot$style$col.axis
+      style$col.baseline <- riojaPlot$style$col.baseline
       style$plot.top.axis <- riojaPlot$style$plot.top.axis
    }
    
@@ -613,6 +615,7 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
                 ylabPos=style$ylabPos, x.pc.omit0=style$x.pc.omit0, lwd.poly.line=style$lwd.poly.line,
                 lwd.line=style$lwd.line, col.exag.line=style$col.exag.line,
                 lwd.exag.line=style$lwd.exag.line, lwd.axis=style$lwd.axis, col.axis=style$col.axis, 
+                col.baseline=style$col.baseline, 
                 min.width=style$min.width.pc, las=style$las.xaxis, yBottom=style$yBottom,
                 omitMissing=style$omitMissing, col.sep.bar=style$col.sep.bar, sep.bar=style$sep.bar,
                 plot.top.axis=style$plot.top.axis, plot.bottom.axis=style$plot.bottom.axis,
@@ -644,7 +647,7 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
    x$dbox <- dbox
    if (!is.null(clust) & style$plot.zones > 1) {
 #      addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, yaxs="i", lwd=style$lwd.zones)
-      addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, lwd=style$lwd.zones)
+      addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, lwd=style$lwd.zones, col.axis=style$col.zones)
    }
    invisible(x)
 }
@@ -729,10 +732,13 @@ addRPClust <- function(riojaPlot, clust, xLeft=NULL, xRight=0.99, verbose=TRUE, 
   plot(clust, xvar=riojaPlot$yvar, horiz=TRUE, x.rev=riojaPlot$y.rev, 
        labels=rep("", length(riojaPlot$yvar)), hang=-1, mgp=riojaPlot$mgpX, 
        cex.axis=riojaPlot$style$cex.xaxis, xlim=xl, yaxs="i", xpd=FALSE, 
-       tcl=riojaPlot$style$tcl, ...)
+       tcl=riojaPlot$style$tcl, axes=FALSE, ...)
+  axis(side=1, mgp=riojaPlot$mgpX, 
+       cex.axis=riojaPlot$style$cex.xaxis, xpd=FALSE, 
+       tcl=riojaPlot$style$tcl, col=riojaPlot$style$col.axis)
      if (riojaPlot$style$plot.top.axis) {
        axis(side=3, mgp=riojaPlot$mgpX3, cex.axis=riojaPlot$style$cex.xaxis, 
-            tcl=riojaPlot$style$tcl)
+            tcl=riojaPlot$style$tcl, col=riojaPlot$style$col.axis)
      }
    par(oldpar)
    riojaPlot$box <- box
@@ -800,6 +806,7 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
    if (is.null(xLeft))
      xLeft <- riojaPlot$box[2] 
    x <- riojaPlot(x, y, user1=zones[, 2, drop=TRUE],
+            start.new.plot=FALSE,
             riojaPlot=riojaPlot, 
             xRight=xRight,
             xLeft=xLeft,
@@ -871,7 +878,8 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
                   exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, 
                   col.bg=NULL, fun1=NULL, fun2=NULL, add=FALSE,  
                   cumul.mult = 1.0, col.exag.line=NA, lwd.exag.line=0.6, lwd.axis=1, 
-                  col.axis="black", omitMissing=TRUE, plot.top.axis=FALSE, plot.bottom.axis=TRUE, 
+                  col.axis="black", col.baseline="darkgrey", omitMissing=TRUE, plot.top.axis=FALSE, 
+                  plot.bottom.axis=TRUE, 
                   xlabPos=0.1, las.yaxis=1, fun.plotback=NULL, fun.yaxis=NULL, 
                   lithology=NULL, fun.lithology=NULL, lithology.width=0.5, srt.ylabel=90, 
                   centre.xlabel=FALSE, lwd.zones=style$lwd.zones,
@@ -1205,7 +1213,7 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
        plot(0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", 
             yaxs = "i", ylim = ylim, tcl=tcly, ...)
        axis(side=2, las=las.yaxis, at=ylab2$y, labels = as.character(format(ylab2$x)), 
-            cex.axis=cex.yaxis, xpd=TRUE, tcl=tcly, mgp=mgpY) # c(3, 0.6, 0))
+            cex.axis=cex.yaxis, xpd=TRUE, tcl=tcly, mgp=mgpY, col=col.axis) # c(3, 0.6, 0))
        addName(yNames[2], xLabSpace, srt.ylabel, cex.xlabel, y.rev, offset=-2)     
        add <- TRUE
      }
@@ -1226,7 +1234,7 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
      y.tks.labels = as.character(y.tks.labels)
      
      ax <- axis(side=2, las=las.yaxis, at=y.tks, labels=y.tks.labels, 
-                cex.axis=cex.yaxis, xpd=TRUE, tcl=tcly, mgp=mgpY) # c(3, 0.6, 0))
+                cex.axis=cex.yaxis, xpd=TRUE, tcl=tcly, mgp=mgpY, col=col.axis) # c(3, 0.6, 0))
 #     x1 <- x1 + xSpace 
 #     mtext(title, adj = 0, line = 5, cex = cex.title)
 #     if (nchar(stringr::str_trim(yNames[1])) > 0) {
@@ -1244,12 +1252,16 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
            addName(yNames[1], xLabSpace, srt.ylabel, cex.xlabel, y.rev, offset=-2)     
         }
      }
+   } else {
+     par(new=add)
+      plot(NA, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", 
+         yaxs = "i", ylim = ylim, tcl=tcly, ...)
+     add <- TRUE
    }
 
    figs <- vector("list", length=nsp)
    usrs <- vector("list", length=nsp)
 
-   
    if(!is.null(fun.plotback)) {
       fbox=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop)     
       myfig <- par("fig")
@@ -1358,10 +1370,17 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
         }
         
        yus <- par("usr")
-       yymin <- max(c(min(y_var, na.rm=TRUE), min(yus[3:4]))) 
-       yymax <- min(c(max(y_var, na.rm=TRUE), max(yus[3:4]))) 
-
-       lines(c(0, 0), c(yymin, yymax), lwd=lwd.axis, xpd=NA, col=col.axis, ...)
+       
+       if (cumulPlot)  {
+          yymin <- max(c(min(y_var, na.rm=TRUE), min(yus[3:4]))) 
+          yymax <- min(c(max(y_var, na.rm=TRUE), max(yus[3:4]))) 
+       } else {
+          yymin <- min(yus[3:4])
+          yymax <- max(yus[3:4])
+       }
+       
+#       lines(c(0, 0), c(yymin, yymax), lwd=lwd.axis, xpd=NA, col=col.axis, ...)
+       lines(c(0, 0), c(yymin, yymax), lwd=lwd.axis, xpd=NA, col=col.baseline, ...)
 #       lines(c(0, 0), c(min(y_var, na.rm=TRUE), max(y_var, na.rm=TRUE)), lwd=lwd.axis, xpd=NA, col=col.axis, ...)
        if (ty == "l") 
           lines(x_var, y_var, col = cc.line[i], lwd = lwd.line)
@@ -1383,15 +1402,15 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
              if (x.pc.omit0)
                 xlabbt[1] <- ""
              if (plot.bottom.axis) 
-                axis(side=1, at=xlabb, labels=xlabbt, mgp=mgpX, cex.axis=cex.axis, tcl=tclx, ...)
+                axis(side=1, at=xlabb, labels=xlabbt, mgp=mgpX, cex.axis=cex.axis, tcl=tclx, col=col.axis, ...)
              if (plot.top.axis) {
-                axis(side=3, at=xlabb, labels=xlabbt, mgp=mgpX3, cex.axis=cex.axis, tcl=tclx, ...)
+                axis(side=3, at=xlabb, labels=xlabbt, mgp=mgpX3, cex.axis=cex.axis, tcl=tclx, col=col.axis, ...)
              }
          } else {
              if (plot.bottom.axis) 
-                axis(side=1, at=xlabb, labels=FALSE, mgp=mgpX, ...)
+                axis(side=1, at=xlabb, labels=FALSE, mgp=mgpX, col=col.axis, ...)
              if (plot.top.axis)
-                axis(side=3, at=xlabb, labels=FALSE, mgp=mgpX3, ...)
+                axis(side=3, at=xlabb, labels=FALSE, mgp=mgpX3, col=col.axis, ...)
          }
        }
        x1 <- x1 + inc2 + xSpace
@@ -1401,7 +1420,7 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
        par(fig = c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop))
        if (!is.null(minmax)) {
           plot(x_var, y_var, cex = 0.5, axes = FALSE, xaxs = "i", 
-               type = "n", yaxs = "i", ylim = ylim, xlim=c(minmax[i, 1], minmax[i,2]), ...)
+               type = "n", yaxs = "i", ylim = ylim, xlim=c(minmax[i, 1], minmax[i, 2]), ...)
        } else {
           plot(x_var, y_var, cex = 0.5, axes = FALSE, xaxs = "i", 
              type = "n", yaxs = "i", ylim = ylim,  ...)
@@ -1460,12 +1479,16 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
           }
        }
        yus <- par("usr")
-       yymin <- max(c(min(y_var, na.rm=TRUE), min(yus[3:4]))) 
-       yymax <- min(c(max(y_var, na.rm=TRUE), max(yus[3:4]))) 
+       if (cumulPlot)  {
+          yymin <- max(c(min(y_var, na.rm=TRUE), min(yus[3:4]))) 
+          yymax <- min(c(max(y_var, na.rm=TRUE), max(yus[3:4]))) 
+       } else {
+          yymin <- min(yus[3:4])
+          yymax <- max(yus[3:4])
+       }
 
        lines(c(us[1], us[1]), c(yymin, yymax), lwd=lwd.axis, 
-#       lines(c(us[1], us[1]), c(min(y_var, na.rm=TRUE), max(y_var, na.rm=TRUE)), lwd=lwd.axis, 
-             col=col.axis, xpd=NA, ...)
+             col=col.baseline, xpd=NA, ...)
        if (ty == "l") 
           lines(x_var, y_var, col = cc.line[i], lwd = lwd.line)
        if (plot.symb[i] & !cumulPlot) {
@@ -1483,14 +1506,14 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
              nn <- length(axTicks(1))
              tk <- c(axTicks(1)[1], axTicks(1)[nn])
              if (plot.bottom.axis) 
-                axis(side=1, at=tk, labels=as.character(tk), cex.axis=cex.axis, mgp=mgpX, tcl=tclx, ...)
+                axis(side=1, at=tk, labels=as.character(tk), cex.axis=cex.axis, mgp=mgpX, tcl=tclx, col=col.axis, ...)
              if (plot.top.axis)
-                axis(side=3, at=tk, labels=as.character(tk), cex.axis=cex.axis, mgp=mgpX3, tcl=tclx, ...)
+                axis(side=3, at=tk, labels=as.character(tk), cex.axis=cex.axis, mgp=mgpX3, tcl=tclx, col=col.axis, ...)
           } else {
              if (plot.bottom.axis) 
-                axis(side=1, cex.axis=cex.axis, mgp=mgpX, ...)
+                axis(side=1, cex.axis=cex.axis, mgp=mgpX, col=col.axis, ...)
              if (plot.top.axis)
-                axis(side=3, cex.axis=cex.axis, mgp=mgpX3, ...)
+                axis(side=3, cex.axis=cex.axis, mgp=mgpX3, col=col.axis, ...)
           }
        }
        x1 <- x1 + inc2 + xSpace
@@ -1531,9 +1554,11 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
          xl <- ylim
      plot(clust, xvar=yvar[, 1, drop=TRUE], horiz=TRUE, x.rev=y.rev, 
           labels=rep("", length(yvar[, 1, drop=TRUE])), 
-          hang=-1, mgp=mgpX, cex.axis=cex.axis, xlim=xl, yaxs="i", xpd=FALSE, tcl=tclx, ...)
+          hang=-1, mgp=mgpX, cex.axis=cex.axis, xlim=xl, yaxs="i", xpd=FALSE, tcl=tclx, axes=FALSE, ...)
+     axis(side=1, mgp=mgpX, cex.axis=cex.axis, tcl=tclx, col=col.axis)
+     
      if (plot.top.axis) {
-       axis(side=3, mgp=mgpX3, cex.axis=cex.axis, tcl=tclx)
+       axis(side=3, mgp=mgpX3, cex.axis=cex.axis, tcl=tclx, col=col.axis)
      }
    }
    par(mai = oldmai)

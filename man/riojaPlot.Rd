@@ -91,6 +91,7 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{exag.alpha}}{ alpha value for exaggeration curves. }
   \item{\code{plot.groups}}{ show curves with different colours (default FALSE). }
   \item{\code{plot.cumul}}{ add a cumulative summary based on groups on right of diagram (default FALSE). }
+  \item{\code{cumul.mult}}{ width of the cumulative plot (default 1.0). }
   \item{\code{col.group}}{ character vector of 10 colours for groups (will be recycled to 10). }
   \item{\code{xlabels}}{ character vector of labels for the plots (overrides column names). }
   \item{\code{labels.break.long}}{ break long names (default TRUE). }
@@ -100,7 +101,9 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{xLeft, xRight}}{ left and right hand position of plot (as fraction of page width). Will be determined automatically depending of label sizes, override to fine-tune. }
   \item{\code{yTop, yBottom}}{ top and bottom positions of plot (as fraction of page height). Will be determined automatically depending of label sizes, override to fine-tune. yBottom default is 0.05, increase if axis labels are truncated. }
   \item{\code{las.xaxis, las.xaxis}}{ orientation of x- and y-axis labels (1=horz, 2=vert, default 1). }
+  \item{\code{col.axis, col.baseline}}{ colour for x/y axes and basline, defaults black and darkgrey. }
   \item{\code{fun.xback, fun.xfront}}{ custom functions of add elements to a plot above (fun.xfront) or behind (fun.xback) data. See below. }
+  \item{\code{fun.plotback, fun.yaxis}}{ custom functions of add elements to the plot background or to generate a custom y-axis. See below. }
   \item{\code{x.pc.omit0}}{ omit zero value of axis values when scaling for percent data (default TRUE). }
   \item{\code{x.pc.inc}}{ for percentage diagrams single value or numeric vector of intervals for x-axes. }
   \item{\code{min.width.pc}}{ for percentage diagrams the minimim data width of the x-axes. }
