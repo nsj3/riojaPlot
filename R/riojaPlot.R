@@ -414,8 +414,8 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
       if (any(is.na(gr_names_d2$Group)) & verbose) {
          message("The following variable names are not found in the grouping variable:")
          message(paste(colnames(mydata$spec)[is.na(gr_names_d2$Group)], collapse="\n"))
-         gr_names_d$Group <- forcats::fct_explicit_na(gr_names_d$Group, na_level = "Unkn")
-         gr_names_d2$Group <- forcats::fct_explicit_na(gr_names_d2$Group, na_level = "Unkn")
+         gr_names_d$Group <- forcats::fct_na_value_to_level(gr_names_d$Group, level = "Unkn")
+         gr_names_d2$Group <- forcats::fct_na_value_to_level(gr_names_d2$Group, level = "Unkn")
       }
       if (length(levels(gr_names_d2$Group)) > 10)
          stop("Too many groups specified, maximum allowed is 10.")

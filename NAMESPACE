@@ -12,7 +12,7 @@ importFrom(dplyr, left_join)
 
 importFrom(methods, is)
 
-importFrom(forcats, fct_explicit_na)
+importFrom(forcats, fct_na_value_to_level)
 
 import(grDevices)
 import(graphics)
