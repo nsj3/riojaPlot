@@ -279,7 +279,7 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL,
          message("The following variables are listed in selVars but are not found in the data, did you spell them correctly?")
          message(paste(mydata$selVars[tmp], collapse="\n"))
       } 
-      d <- mydata$spec[, mydata$selVars[!tmp]]
+      d <- mydata$spec[, mydata$selVars[!tmp], drop=FALSE]
       tmp2 <- which(colnames(mydata$spec) %in% mydata$selVars[!tmp])
 #      style$xlabels <- style$xlabels[tmp2]
       style$xlabels <- style$xlabels[mydata$selVars[!tmp]]
