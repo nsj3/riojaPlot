@@ -10,4 +10,5 @@ Rp*.*
 /Meta/
 dev/
 .gitignore
+.Rbuildignore
 
