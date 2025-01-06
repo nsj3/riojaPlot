@@ -1,3 +1,4 @@
+riojaPlot.Rproj
 .Rproj.user/
 .Rhistory
 .RData
@@ -8,3 +9,5 @@ Rp*.*
 /doc/
 /Meta/
 dev/
+.gitignore
+.gitattributes
