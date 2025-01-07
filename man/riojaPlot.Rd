@@ -66,7 +66,7 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{plot.sec.axis}}{ show secondary y-axis.  Default FALSE. }
   \item{\code{yLabel, secyLabel}} { labels for the primary and secondary y-axes.  Uses column names if not specified. }
   \item{\code{scale.percent}}{ scale the diagram for percentage data (default TRUE). }
-  \item{\code{scale.minmax}}{ for non-percentage data, only label min and max values of x-axes to avoid crowding (default FALSE). }
+  \item{\code{scale.minmax}}{ logical, for non-percentage data, only label minimum and maximum values on the x-axes to avoid label crowding (default FALSE). }
   \item{\code{y.rev}}{ reverse the y-axis (default TRUE). }
   \item{\code{ymin, ymax, sec.ymin, sec.ymax}}{ minimum and maximum of primary and secondary y-axes. }
   \item{\code{yinterval, sec.yinterval}}{ intervals for primary and secondary y-axes. }
@@ -98,17 +98,16 @@ See \code{vignette("riojaPlot")} for a user guide or \code{vignette("riojaPlotPD
   \item{\code{labels.break.n}}{ number of characters to break after (default 20). }
   \item{\code{labels.italicize}}{ italicize names. }
   \item{\code{xRight}}{ right hand position of plot (as fraction of page width). }
-  \item{\code{xLeft, xRight}}{ left and right hand position of plot (as fraction of page width). Will be determined automatically depending of label sizes, override to fine-tune. }
-  \item{\code{yTop, yBottom}}{ top and bottom positions of plot (as fraction of page height). Will be determined automatically depending of label sizes, override to fine-tune. yBottom default is 0.05, increase if axis labels are truncated. }
+  \item{\code{xLeft, xRight}}{ left and right hand position of plot (as fraction of page width). Will be determined automatically depending on label sizes, override to fine-tune. }
+  \item{\code{yTop, yBottom}}{ top and bottom positions of plot (as fraction of page height). Will be determined automatically depending on label sizes, override to fine-tune. yBottom default is 0.05, increase if x-axis values are truncated. }
   \item{\code{las.xaxis, las.xaxis}}{ orientation of x- and y-axis labels (1=horz, 2=vert, default 1). }
   \item{\code{col.axis, col.baseline}}{ colour for x/y axes and basline, defaults black and darkgrey. }
-  \item{\code{fun.xback, fun.xfront}}{ custom functions of add elements to a plot above (fun.xfront) or behind (fun.xback) data. See below. }
+  \item{\code{fun.xback, fun.xfront}}{ custom functions to add elements to a plot above (fun.xfront) or behind (fun.xback) data. See below. }
   \item{\code{fun.plotback, fun.yaxis}}{ custom functions of add elements to the plot background or to generate a custom y-axis. See below. }
   \item{\code{x.pc.omit0}}{ omit zero value of axis values when scaling for percent data (default TRUE). }
   \item{\code{x.pc.inc}}{ for percentage diagrams single value or numeric vector of intervals for x-axes. }
   \item{\code{min.width.pc}}{ for percentage diagrams the minimim data width of the x-axes. }
-  \item{\code{scale.minmax}}{ logical, for non-percentage diagrams show only mimimum and maximum values on the x-axis to avoid label crowding (default FALSE). }
-  \item{\code{minmax}}{ for non-percentage diagrams an optional dataframe with two columns containing the minimum and maximum values of the x-axis scale for each variable. }
+  \item{\code{minmax}}{ for non-percentage diagrams an optional dataframe with two columns containing the minimum and maximum limits of the x-axis scale for each variable. }
   \item{\code{graph.widths}}{ vector of relative widths for each graph (default 1). }
   \item{\code{xSpace}}{ space between individual graphs (fraction of page width, default=0.01). }
   \item{\code{xGap}}{ space between datasets plotted by repeated calls to riojaPlot (fraction of page width, default=0.01). }
