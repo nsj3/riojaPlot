@@ -28,7 +28,7 @@ vignette("riojaPlot")
 
 [Vignette (html version)](https://htmlpreview.github.io/?https://github.com/nsj3/riojaPlot/blob/main/vignettes/riojaPlot.html)
 
-[Vignette (pdf version)](https://htmlpreview.github.io/?https://github.com/nsj3/riojaPlot/blob/main/vignettes/riojaPlotPDF.pdf)
+[Vignette (pdf version)](vignettes/riojaPlotPDF.pdf)
 
 [Demonstration R script](Figures/riojaPlot_Demo.R)
 
