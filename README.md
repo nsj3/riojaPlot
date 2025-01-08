@@ -26,7 +26,9 @@ vignette("riojaPlot")
 
 [Full riojaPlot gallery with scripts](https://nsj3.github.io/riojaPlot_gallery/riojaPlot_Gallery.html#1)
 
-[Vignette](https://htmlpreview.github.io/?https://github.com/nsj3/riojaPlot/blob/main/vignettes/riojaPlot.html)
+[Vignette (html version)](https://htmlpreview.github.io/?https://github.com/nsj3/riojaPlot/blob/main/vignettes/riojaPlot.html)
+
+[Vignette (pdf version)](https://htmlpreview.github.io/?https://github.com/nsj3/riojaPlot/blob/main/vignettes/riojaPlotPDF.pdf)
 
 [Demonstration R script](Figures/riojaPlot_Demo.R)
 
