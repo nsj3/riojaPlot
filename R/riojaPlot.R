@@ -815,6 +815,7 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
             plot.bar=FALSE,
             plot.top.axis=FALSE,
             plot.bottom.axis=FALSE,
+            col.baseline=NA,
             fun.xfront=fun.zone)
   riojaPlot$dbox[2] <- xRight
   riojaPlot$box <- x$box
