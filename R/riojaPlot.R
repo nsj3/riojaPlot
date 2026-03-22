@@ -1138,7 +1138,16 @@ addRPZoneNames <- function(riojaPlot, zones, showColumn=TRUE, xLeft=NULL, xRight
          line2fig <- strheight(yNames[1], units='figure', cex=1) # / plotRatio
          xLeft <- xLeft + (line2fig + line2fig * cex.ylabel) 
       }
+   } else {
+      if (!is.null(y.tks.labels))
+        ylabs <- y.tks.labels
+      else 
+#        ylabs <- as.character(yvar[, 1])
+        ylabs <- pretty(yvar[, 1], n=10)
    }
+   
+   
+   
 
    if (y.axis & doSecYvar) {
       if (is(y.tks, "list") & !is.null(y.tks[[2]])) {
